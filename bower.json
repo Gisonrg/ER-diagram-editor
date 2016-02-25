@@ -1,0 +1,9 @@
+{
+  "name": "er-diagram-editor",
+  "license": "MIT",
+  "dependencies": {
+    "angular": "~1.5.0",
+    "angular-route": "^1.5.0",
+    "material-design-lite": "^1.1.1"
+  }
+}
