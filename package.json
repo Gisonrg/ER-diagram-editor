@@ -6,6 +6,10 @@
   "devDependencies": {
     "bower": "^1.7.7",
     "browser-sync": "^2.11.1",
-    "gulp": "^3.9.1"
+    "gulp": "^3.9.1",
+    "gulp-angular-filesort": "^1.1.1",
+    "gulp-inject": "^3.0.0",
+    "gulp-sass": "^2.2.0",
+    "gulp-util": "^3.0.7"
   }
 }

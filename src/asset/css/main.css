@@ -1,0 +1,35 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden; }
+
+.toolbar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 25%;
+  height: 100%;
+  text-align: center; }
+
+.editor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 75%;
+  overflow: scroll;
+  background: transparent url("../img/background.png");
+  height: 100%; }
+  .editor .editor-container {
+    border: 1px red solid;
+    height: 100%;
+    width: 100%; }
+
+.er-entity {
+  width: 150px;
+  height: 150px;
+  background: #aaaaaa; }
+  .er-entity .name {
+    text-align: center;
+    font-size: 16px; }
