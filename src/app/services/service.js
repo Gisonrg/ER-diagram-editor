@@ -1,4 +1,4 @@
 (function (angular) {
 	'use strict';
-	angular.module('myApp.common', ['toolbar']);
+	angular.module('myApp.services', []);
 })(window.angular);

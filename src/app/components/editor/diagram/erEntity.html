@@ -1,5 +1,8 @@
-<div class="er-entity">
+<div class="er-entity" context-menu="$ctrl.menuOptions">
     <div class="name">
-        {{ $ctrl.name }}
+        {{ $ctrl.entity.name }}
+    </div>
+    <div class="attribute-container">
+        <er-attribute ng-repeat="attr in $ctrl.entity.attributes" attribute="attr"></er-attribute>
     </div>
 </div>

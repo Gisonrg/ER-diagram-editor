@@ -1,19 +1,76 @@
+@mixin hover-shadow() {
+  border: 1px solid #CCC;
+  -moz-box-shadow: 1px 1px 5px #999;
+  -webkit-box-shadow: 1px 1px 5px #999;
+  box-shadow: 1px 1px 5px #999;
+}
+
+@mixin unselectable() {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 html, body {
   height: 100%;
   width: 100%;
   overflow: hidden;
 }
 
-.toolbar {
-  //width: 2000px;
-  //height: 2000px;
+.toolbar-banner {
+  position: fixed;
+  top: 0;
+  height: 50px;
+  width: 25%;
+  padding:5px;
+  text-align: center;
+}
+
+.toolbar-diagrams {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   width: 25%;
+  padding: 80px 15px;
   height:100%;
   text-align: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.toolbar-menu {
+  position: fixed;
+  bottom: 0;
+  height: 50px;
+  width: 25%;
+  padding:10px;
+  background-color: #d0e5f5;
+  text-align: center;
+}
+
+.toolbar-diagram {
+  text-align: center;
+  cursor: move;
+
+  .template {
+    width: auto;
+
+    .entity {
+      height: 100px;
+    }
+  }
+
+  .name {
+    @include unselectable();
+  }
+
+  &:hover {
+    @include hover-shadow();
+  }
 }
 
 .editor {
@@ -22,12 +79,11 @@ html, body {
   bottom: 0;
   right: 0;
   width: 75%;
-  overflow: scroll;
+  overflow: auto;
   background: transparent url('../img/background.png');
   height:100%;
 
   .editor-container {
-    border: 1px red solid;
     height:100%;
     width: 100%;
   }
@@ -35,13 +91,33 @@ html, body {
 
 // style for table entity in er diagram
 .er-entity {
-  width: 150px;
-  height: 150px;
-  background: #aaaaaa;
+  border: 2px solid black;
+  min-width: 180px;
+  min-height: 109px;
+  width: auto;
+  height: auto;
+  background-color: white;
 
-  .name {
+  & > .name:first-child {
+    height: 30px;
+    line-height: 30px;
+    @include unselectable();
     text-align: center;
-    font-size: 16px;
+    font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 2px solid black;
+  }
+}
+
+.er-attribute {
+  height: 25px;
+  line-height: 25px;
+  & > .name {
+    text-align: center;
+    font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    border-bottom: 1px solid black;
   }
 }
 

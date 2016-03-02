@@ -1,5 +1,26 @@
-<div class="toolbar">
-    <div class="btn btn-primary toolbarIcon" data-drag="true" id="entity" data-jqyoui-options="{revert: 'invalid', 'helper': 'clone', 'containment' : 'document'}" jqyoui-draggable>
-        Button
+<div class="toolbar-banner">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>ER Diagram Editor</h3>
+        </div>
+    </div>
+</div>
+<div class="toolbar-diagrams">
+    <div class="toolbar-diagram"
+         data-drag="true" id="entity" data-jqyoui-options="{revert: 'invalid', helper: 'clone', containment : 'document', scroll: false, appendTo: 'body'}"
+         jqyoui-draggable>
+        <div class="template">
+            <img class="entity" src="asset/img/diagram/entity.png" alt="">
+        </div>
+        <div class="name">
+            Entity
+        </div>
+    </div>
+</div>
+<div class="toolbar-menu">
+    <div class="row">
+        <div class="col-md-12">
+            <button type="button" class="btn btn-default" ng-click="$ctrl.onGenerate()">Generate</button>
+        </div>
     </div>
 </div>

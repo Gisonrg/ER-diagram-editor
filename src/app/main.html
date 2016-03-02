@@ -1,4 +1,15 @@
 <div class="main-container">
-    <toolbar></toolbar>
+    <toolbar on-generate="$ctrl.generateSchemaData()"></toolbar>
     <editor></editor>
 </div>
+<script type="text/ng-template" id="json-data-viewer.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Generated JSON schema</h3>
+    </div>
+    <div class="modal-body">
+        <json-formatter json=data open="4"></json-formatter>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+    </div>
+</script>
