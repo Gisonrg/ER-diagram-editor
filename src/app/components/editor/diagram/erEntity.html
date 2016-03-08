@@ -3,6 +3,8 @@
         {{ $ctrl.entity.name }}
     </div>
     <div class="attribute-container">
-        <er-attribute ng-repeat="attr in $ctrl.entity.attributes" attribute="attr"></er-attribute>
+        <er-attribute ng-repeat="attr in $ctrl.entity.attributes"
+                      ng-class="{'primary-key' : attr.isPrimaryKey}"
+                      attr-index="$index" attribute="attr"></er-attribute>
     </div>
 </div>

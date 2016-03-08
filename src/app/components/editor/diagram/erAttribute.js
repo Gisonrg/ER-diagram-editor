@@ -10,13 +10,15 @@
 		ctrl.menuOptions = [
 			['Edit', function () {
 				console.log('edit');
+				console.log('index', ctrl.attrIndex);
 			}]
 		];
 	}
 
 	angular.module('editor').component('erAttribute', {
 		bindings: {
-			attribute: '<'
+			attribute: '<',
+			attrIndex: '<' // track which index this entity is from
 		},
 		templateUrl: './app/components/editor/diagram/erAttribute.html',
 		controller: AtrributeController

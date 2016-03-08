@@ -95,3 +95,6 @@ html, body {
     font: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
     border-bottom: 1px solid black; }
+
+.primary-key {
+  font-weight: bold; }

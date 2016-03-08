@@ -19,7 +19,6 @@
 		};
 
 		ctrl.addAttribute = function ($itemScope) {
-
 			ctrl.addNewAttribute('lg').then(function (data) {
 				ctrl.entity.addAttribute(data);
 			});

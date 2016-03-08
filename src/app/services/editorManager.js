@@ -1,36 +1,6 @@
 (function (angular) {
 	'use strict';
 
-	function Entity(name) {
-		this.name = name;
-		this.attributes = [];
-	}
-
-	Entity.prototype.addAttribute = function (attributeData) {
-		this.attributes.push(new Attribute(attributeData));
-	};
-
-	Entity.prototype.summarize = function () {
-		var attributes = [];
-		this.attributes.forEach(function (attribute) {
-			attributes.push({
-				name: attribute.name,
-				type: attribute.type
-			});
-		});
-
-		return {
-			name: this.name,
-			attributes: attributes
-		}
-	};
-
-	function Attribute(attributeData) {
-		this.name = attributeData.name;
-		this.type = attributeData.type;
-	}
-
-
 	function editorManager() {
 		var manager = {};
 

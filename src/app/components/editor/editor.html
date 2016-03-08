@@ -27,7 +27,22 @@
             </div>
             <div class="form-group">
                 <label for="name">Type</label>
-                <select ng-options="type for type in typeList" ng-model="data.type"></select>
+                <select ng-options="type as type.name for type in typeList"
+                        ng-model="data.type"></select>
+            </div>
+            <div class="form-group" ng-if="data.type.hasLength">
+                <label for="name">Length</label>
+                <input type="number" class="form-control" id="name" ng-model="data.type.length" min="0" max="65535">
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input ng-model="data.notNull" type="checkbox"> Not null
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input ng-model="data.isPrimaryKey" type="checkbox" ng-change="togglePrimaryKey()"> Primary Key
+                </label>
             </div>
         </div>
         <div class="modal-footer">
