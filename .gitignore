@@ -66,3 +66,6 @@ jspm_packages
 .node_repl_history
 
 bower_components
+
+# hide generated css file
+src/asset/css
