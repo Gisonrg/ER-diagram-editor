@@ -114,6 +114,7 @@ html, body {
   height: 25px;
   line-height: 25px;
   & > .name {
+    @include unselectable();
     text-align: center;
     font: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;

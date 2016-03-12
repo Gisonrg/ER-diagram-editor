@@ -13,10 +13,18 @@
 		};
 	});
 
-	angular.module('editor').controller('NewAttributeModalCtrl', function ($scope, $uibModalInstance, DataType) {
+	angular.module('editor').controller('AttributeModalCtrl', function ($scope, $uibModalInstance, title, DataType) {
+		$scope.title = title;
 		$scope.typeList = DataType;
 
-		$scope.data = {
+		/**
+		 * $scope.attributeData exists if it's editing an attribute
+		 */
+		if ($scope.attributeData) {
+			// now editing an existing attribute
+			// can do some checking here
+		}
+		$scope.data = $scope.attributeData || {
 			name: '',
 			type: DataType[0],
 			notNull: false,

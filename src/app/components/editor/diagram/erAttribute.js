@@ -9,8 +9,10 @@
 
 		ctrl.menuOptions = [
 			['Edit', function () {
-				console.log('edit');
-				console.log('index', ctrl.attrIndex);
+				ctrl.onEdit(); // call handler
+			}],
+			['Remove', function () {
+				ctrl.onRemove(); // call handler
 			}]
 		];
 	}
@@ -18,7 +20,8 @@
 	angular.module('editor').component('erAttribute', {
 		bindings: {
 			attribute: '<',
-			attrIndex: '<' // track which index this entity is from
+			onEdit: '&', // edit attribute,
+			onRemove: '&' // remove this attribute
 		},
 		templateUrl: './app/components/editor/diagram/erAttribute.html',
 		controller: AtrributeController

@@ -31,6 +31,19 @@ Entity.prototype.addAttribute = function (attributeData) {
 	this.attributes.push(new Attribute(attributeData));
 };
 
+
+Entity.prototype.getAttribute = function (index) {
+	return this.attributes[index];
+};
+
+Entity.prototype.editAttribute = function (index, attributeData) {
+	this.attributes[index] = new Attribute(attributeData);
+};
+
+Entity.prototype.removeAttribute = function (index) {
+	this.attributes.splice(index, 1);
+};
+
 Entity.prototype.summarize = function () {
 	var attributes = [];
 	var primaryKeys = [];
@@ -43,7 +56,7 @@ Entity.prototype.summarize = function () {
 			meta.length = attribute.type.length;
 		}
 		if (attribute.notNull) {
-			meta.notNull = 'true';
+			meta.notNull = true;
 		}
 		if (attribute.isPrimaryKey) {
 			primaryKeys.push(attribute.name);

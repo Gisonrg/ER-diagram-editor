@@ -5,6 +5,10 @@
     <div class="attribute-container">
         <er-attribute ng-repeat="attr in $ctrl.entity.attributes"
                       ng-class="{'primary-key' : attr.isPrimaryKey}"
-                      attr-index="$index" attribute="attr"></er-attribute>
+                      attribute="attr"
+                      on-edit="$ctrl.editAttribute($index)",
+                      on-remove="$ctrl.removeAttribute($index)"
+        >
+        </er-attribute>
     </div>
 </div>

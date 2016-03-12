@@ -19,10 +19,24 @@
 		};
 
 		ctrl.addAttribute = function ($itemScope) {
-			ctrl.addNewAttribute('lg').then(function (data) {
+			ctrl.addNewAttributeModal().then(function (data) {
 				ctrl.entity.addAttribute(data);
 			});
 		};
+
+		/**
+		 * Edit an attribute
+		 * @param index array index of the attribute
+		 */
+		ctrl.editAttribute = function (index) {
+			ctrl.editAttributeModal(ctrl.entity.getAttribute(index)).then(function (data) {
+				ctrl.entity.editAttribute(index, data);
+			});
+		};
+
+		ctrl.removeAttribute = function (index) {
+			ctrl.entity.removeAttribute(index);
+		}
 
 		ctrl.menuOptions = [
 			['Add attribute', ctrl.addAttribute],
@@ -37,11 +51,48 @@
 		];
 
 		// modal related
-		ctrl.addNewAttribute = function (size) {
+		ctrl.addNewAttributeModal = function () {
 			var modalInstance = $uibModal.open({
 				templateUrl: 'new-attribute-prompt.html',
-				controller: 'NewAttributeModalCtrl',
-				size: size
+				controller: 'AttributeModalCtrl',
+				size: 'lg',
+				resolve: {
+					title: function () {
+						return 'Create new attribute';
+					}
+				}
+			});
+
+			return modalInstance.result; // return the promise
+		};
+
+		/**
+		 *
+		 * @param size modal size
+		 * @param attribute the Attribute model
+		 * @returns {*}
+		 */
+		ctrl.editAttributeModal = function (attribute) {
+			// create a scope for the modal that contains attribute data
+			var newScope = $scope.$new(true);
+			newScope.attributeData = {
+				name: attribute.name,
+				type: attribute.type,
+				notNull: attribute.notNull,
+				isPrimaryKey: attribute.isPrimaryKey,
+				isForeignKey: attribute.isForeignKey
+			};
+
+			var modalInstance = $uibModal.open({
+				templateUrl: 'new-attribute-prompt.html',
+				controller: 'AttributeModalCtrl',
+				size: 'lg',
+				scope: newScope, // pass the scope created
+				resolve: {
+					title: function () {
+						return 'Edit attribute';
+					}
+				}
 			});
 
 			return modalInstance.result; // return the promise
