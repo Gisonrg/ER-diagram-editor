@@ -13,6 +13,12 @@
 			return entity;
 		};
 
+		manager.createRelationship = function (name) {
+			var relationship = new Relationship(name);
+			relationships.push(entity);
+			return relationship;
+		};
+
 		manager.generateSchemaData = function () {
 			var data = {
 				entities: []

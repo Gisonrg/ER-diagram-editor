@@ -72,6 +72,16 @@ Entity.prototype.summarize = function () {
 };
 
 /**
+ * Relationship model
+ * @param name
+ * @constructor
+ */
+function Relationship(name) {
+	this.name = name;
+	this.attributes = [];
+}
+
+/**
  * Attribute model
  * @param attributeData
  * @constructor
