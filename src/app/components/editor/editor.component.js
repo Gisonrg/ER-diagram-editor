@@ -26,6 +26,12 @@
 						ctrl.addNewEntity(offset, name);
 					}, null);
 					break;
+				case "relationship":
+					ctrl.askForEntityName('lg').then(function (name) {
+						console.log("Adding new relationship named " + name + " to the editor");
+						ctrl.addNewRelationship(offset, name);
+					}, null);
+					break;
 				default:
 					console.log("No handler for this dropped object.");
 			}
@@ -35,6 +41,14 @@
 			var newScope = $scope.$new(true);
 			newScope.entity = editorManager.createEntity(name);
 			angular.element($compile('<er-entity entity="entity" on-update="$ctrl.update()"></er-entity>')(newScope))
+				.css({position: 'absolute', top: offset.top, left: offset.left - containerLeftOffset})
+				.appendTo(editorContainer);
+		};
+
+		ctrl.addNewRelationship = function (offset, name) {
+			var newScope = $scope.$new(true);
+			newScope.relationship = editorManager.createRelationship(name);
+			angular.element($compile('<er-relationship model="relationship"></er-relationship>')(newScope))
 				.css({position: 'absolute', top: offset.top, left: offset.left - containerLeftOffset})
 				.appendTo(editorContainer);
 		};
