@@ -4,7 +4,7 @@
 	function AtrributeController($scope, $element, $attrs) {
 		var ctrl = this;
 		ctrl.$onInit = function () {
-
+			ctrl.attribute.dom = $element;
 		};
 
 		ctrl.menuOptions = [
