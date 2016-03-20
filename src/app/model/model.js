@@ -25,23 +25,39 @@
 function Entity(name) {
 	this.name = name;
 	this.attributes = [];
+	this.dom = null;
+	this.connectors = [];
 }
 
 Entity.prototype.addAttribute = function (attributeData) {
-	this.attributes.push(new Attribute(attributeData));
+	var newAttr = new Attribute(attributeData);
+	this.attributes.push(newAttr);
+	return newAttr;
 };
-
 
 Entity.prototype.getAttribute = function (index) {
 	return this.attributes[index];
 };
 
 Entity.prototype.editAttribute = function (index, attributeData) {
-	this.attributes[index] = new Attribute(attributeData);
+	this.attributes[index].updateData(attributeData);
 };
 
 Entity.prototype.removeAttribute = function (index) {
+	// also delete connectors if needed
 	this.attributes.splice(index, 1);
+};
+
+Entity.prototype.addConnectors = function (connectors) {
+	this.connectors.push(connectors);
+};
+
+Entity.prototype.removeConnectors = function (connectors) {
+	var idx = this.connectors.indexOf(connectors);
+	if (idx === -1) {
+		return;
+	}
+	this.connectors.splice(idx, 1);
 };
 
 Entity.prototype.summarize = function () {
@@ -78,7 +94,8 @@ Entity.prototype.summarize = function () {
  */
 function Relationship(name) {
 	this.name = name;
-	this.attributes = [];
+	this.attributes = []
+	this.dom = null;
 }
 
 /**
@@ -90,10 +107,33 @@ function Attribute(attributeData) {
 	this.name = attributeData.name;
 	this.type = attributeData.type;
 	this.notNull = attributeData.notNull;
-	this.isPrimaryKey = attributeData.isPrimaryKey;
-	this.isForeignKey = attributeData.isForeignKey;
+	this.isPrimaryKey = attributeData.isPrimaryKey || false;
+	this.isForeignKey = attributeData.isForeignKey || false;
 	this.isKey = this.isPrimaryKey || this.isForeignKey;
+
+	this.dom = null;
+	this.connectors = [];
 }
+
+Attribute.prototype.updateData = function (attributeData) {
+	this.name = attributeData.name;
+	this.type = attributeData.type;
+	this.notNull = attributeData.notNull;
+	this.isPrimaryKey = attributeData.isPrimaryKey || false;
+	this.isForeignKey = attributeData.isForeignKey || false;
+};
+
+Attribute.prototype.addConnectors = function (connectors) {
+	this.connectors.push(connectors);
+};
+
+Attribute.prototype.removeConnectors = function (connectors) {
+	var idx = this.connectors.indexOf(connectors);
+	if (idx === -1) {
+		return;
+	}
+	this.connectors.splice(idx, 1);
+};
 
 /**
  * DataType model
