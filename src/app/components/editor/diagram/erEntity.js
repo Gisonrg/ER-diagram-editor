@@ -103,12 +103,16 @@
 			ctrl.entity.removeAttribute(index);
 		}
 
+		ctrl.renameEntity = function() {
+			ctrl.askForEntityName(ctrl.entity.name).then(function (newName) {
+				ctrl.entity.rename(newName);
+			});
+		}
+
 		ctrl.menuOptions = [
 			['Add attribute', ctrl.addAttribute],
 			null,
-			['Rename', function () {
-				console.log('Rename');
-			}],
+			['Rename', ctrl.renameEntity],
 			null,
 			['Remove', function () {
 				console.log('Remove');
@@ -116,6 +120,24 @@
 		];
 
 		// modal related
+		ctrl.askForEntityName = function (currentName) {
+			var newScope = $scope.$new(true);
+			newScope.data = currentName;
+			var modalInstance = $uibModal.open({
+				templateUrl: 'input-prompt.html',
+				controller: 'PromptModalCtrl',
+				size: 'lg',
+				scope: newScope,
+				resolve: {
+					title: function () {
+						return 'Please enter new entity name';
+					}
+				}
+			});
+
+			return modalInstance.result; // return the promise
+		};
+
 		ctrl.addNewAttributeModal = function () {
 			var modalInstance = $uibModal.open({
 				templateUrl: 'new-attribute-prompt.html',

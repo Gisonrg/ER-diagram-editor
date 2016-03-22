@@ -39,9 +39,8 @@
 
 		ctrl.addNewEntity = function (offset, name) {
 			var newScope = $scope.$new(true);
-			newScope.entityId = 'entity-' + name;
 			newScope.entity = editorManager.createEntity(name);
-			angular.element($compile('<er-entity id="{{entityId}}" entity="entity" on-update="$ctrl.update()"></er-entity>')(newScope))
+			angular.element($compile('<er-entity id="{{entity.id}}" entity="entity" on-update="$ctrl.update()"></er-entity>')(newScope))
 				.css({position: 'absolute', top: offset.top, left: offset.left - containerLeftOffset})
 				.appendTo(editorContainer);
 		};

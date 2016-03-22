@@ -24,10 +24,17 @@
  */
 function Entity(name) {
 	this.name = name;
+	this.id = 'entity-' + this.name;
 	this.attributes = [];
 	this.dom = null;
 	this.connectors = [];
 }
+
+Entity.prototype.rename = function(newName) {
+	this.name = newName;
+	this.id = 'entity-' + this.name;
+	this.dom.id = this.id;
+};
 
 Entity.prototype.addAttribute = function (attributeData) {
 	var newAttr = new Attribute(attributeData);
