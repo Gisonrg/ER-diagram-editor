@@ -65,7 +65,7 @@
 			ctrl.connectors.forEach(function (e) {
 				e.redraw();
 			});
-		}
+		};
 
 		ctrl.addConnectors = function (connector) {
 			ctrl.connectors.push(connector);
@@ -101,22 +101,27 @@
 		ctrl.removeAttribute = function (index) {
 			ctrl.removeConnectors(index);
 			ctrl.entity.removeAttribute(index);
-		}
+		};
 
-		ctrl.renameEntity = function() {
+		ctrl.renameEntity = function () {
 			ctrl.askForEntityName(ctrl.entity.name).then(function (newName) {
 				ctrl.entity.rename(newName);
 			});
-		}
+		};
+
+		ctrl.removeEntity = function () {
+			ctrl.connectors.forEach(function (e) {
+				e.destroy();
+			});
+			ctrl.onDestroy(ctrl.entity);
+		};
 
 		ctrl.menuOptions = [
 			['Add attribute', ctrl.addAttribute],
 			null,
 			['Rename', ctrl.renameEntity],
 			null,
-			['Remove', function () {
-				console.log('Remove');
-			}]
+			['Remove', ctrl.removeEntity]
 		];
 
 		// modal related
@@ -189,7 +194,8 @@
 	angular.module('editor').component('erEntity', {
 		bindings: {
 			entity: '<',
-			onUpdate: '&'
+			onUpdate: '&',
+			onDestroy: '&'
 		},
 		templateUrl: './app/components/editor/diagram/erEntity.html',
 		controller: EntityController

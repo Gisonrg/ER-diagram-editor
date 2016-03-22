@@ -67,6 +67,14 @@ Entity.prototype.removeConnectors = function (connectors) {
 	this.connectors.splice(idx, 1);
 };
 
+Entity.prototype.destroy = function () {
+	this.attributes.forEach(function(e) {
+		e.destroy();
+	})
+	this.attributes = [];
+	this.dom[0].parentNode.removeChild(this.dom[0]);
+};
+
 Entity.prototype.summarize = function () {
 	var attributes = [];
 	var primaryKeys = [];
@@ -140,6 +148,10 @@ Attribute.prototype.removeConnectors = function (connectors) {
 		return;
 	}
 	this.connectors.splice(idx, 1);
+};
+
+Attribute.prototype.destroy = function () {
+	this.dom[0].parentNode.removeChild(this.dom[0]);
 };
 
 /**
