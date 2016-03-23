@@ -7,7 +7,7 @@
 </div>
 <div class="toolbar-diagrams">
     <div class="toolbar-diagram"
-         data-drag="true" id="entity" data-jqyoui-options="{revert: 'invalid', helper: 'clone', containment : 'document', scroll: false, appendTo: 'body'}"
+         data-drag="true" id="entity" data-jqyoui-options="{revert: 'invalid', helper: 'clone', containment : '.editor', scroll: true, appendTo: '.editor'}"
          jqyoui-draggable>
         <div class="template">
             <img class="entity" src="asset/img/diagram/entity.png" alt="">
@@ -17,7 +17,7 @@
         </div>
     </div>
     <div class="toolbar-diagram"
-         data-drag="true" id="relationship" data-jqyoui-options="{revert: 'invalid', helper: 'clone', containment : 'document', scroll: false, appendTo: 'body'}"
+         data-drag="true" id="relationship" data-jqyoui-options="{revert: 'invalid', helper: 'clone', containment : '.editor', scroll: true, appendTo: '.editor'}"
          jqyoui-draggable>
         <div class="template">
             <img class="entity" src="asset/img/diagram/relationship.png" alt="">
