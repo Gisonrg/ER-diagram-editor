@@ -28,17 +28,14 @@ Connector.prototype.redraw = function () {
 	var elementHeight = 28 / 2;
 
 	var width = this.fromModel.dom.width(),
-		height = this.fromModel.dom.height(),
-		containerLeftOffset = angular.element('.editor-container').offset().left;
-
+		height = this.fromModel.dom.height();
 	// for drawing
 	var fromPosition = this.fromModel.dom.position();
-	var attributeOffset = this.attributeModel.dom.offset();
+	var attributePosition = this.attributeModel.dom.position();
 	var fromX = Math.round(fromPosition.left + width / 2);
 	var fromY = Math.round(fromPosition.top + height / 2);
-	var toX = Math.round(attributeOffset.left + elementWidth - containerLeftOffset);
-	var toY = Math.round(attributeOffset.top + elementHeight);
-
+	var toX = Math.round(fromPosition.left + elementWidth + attributePosition.left);
+	var toY = Math.round(fromPosition.top + elementHeight + attributePosition.top);
 	this.dom.setAttribute('d', 'M ' + fromX + ' ' + fromY + ' L ' + toX + ' ' + toY + ' Z');
 }
 

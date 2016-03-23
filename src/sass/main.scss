@@ -94,20 +94,16 @@ html, body {
 
   .editor-container {
     position: absolute;
-    height: 100%;
-    width: 100%;
+    min-height: 4000px;
+    min-width: 4000px;
   }
 }
 
 #editor-canvas {
   background: transparent;
   position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  width: 75%;
-  height: 100%;
-  overflow: auto;
+  min-height: 4000px;
+  min-width: 4000px;
 }
 
 // style for table entity in er diagram

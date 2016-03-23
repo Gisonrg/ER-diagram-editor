@@ -1,7 +1,17 @@
-<svg height="120px" width="200px">
-    <polygon points="100,0, 200,60, 100,120, 0,60" style="fill:white;stroke:black;stroke-width:2"/>
-    <text x="100" y="60" font-size="18"
-          text-anchor="middle" alignment-baseline="middle">
-        {{$ctrl.model.name}}
-    </text>
-</svg>
+<div class="er-relationship" context-menu="$ctrl.menuOptions">
+    <svg height="120px" width="200px">
+        <polygon points="100,0, 200,60, 100,120, 0,60" style="fill:white;stroke:black;stroke-width:2"/>
+        <text x="100" y="60" font-size="18"
+              text-anchor="middle" alignment-baseline="middle">
+            {{$ctrl.model.name}}
+        </text>
+    </svg>
+    <er-attribute ng-repeat="attr in $ctrl.model.attributes"
+                  ng-class="{'primary-key' : attr.isPrimaryKey}"
+                  attribute="attr"
+                  on-edit="$ctrl.editAttribute($index)"
+                  on-remove="$ctrl.removeAttribute($index)"
+                  repeat-hook
+    >
+    </er-attribute>
+</div>

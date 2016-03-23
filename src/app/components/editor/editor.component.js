@@ -20,9 +20,19 @@
 			editorManager.removeEntity(entity);
 		};
 
+		ctrl.removeRelationship = function (relationship) {
+			relationship.destroy();
+			editorManager.removeRelationship(relationship);
+		};
+
 		ctrl.onDropHandler = function (event, ui) {
 			var offset = ui.offset;
+			offset.left = offset.left + $('.editor').scrollLeft();
+			offset.top = offset.top + $('.editor').scrollTop();
 
+			if (offset.left < Math.round(containerLeftOffset)) {
+				return;
+			}
 			// decide what diagram to add to the dom
 			switch (ui.draggable[0].id) {
 				case 'entity':
@@ -53,7 +63,7 @@
 		ctrl.addNewRelationship = function (offset, name) {
 			var newScope = $scope.$new(false);
 			newScope.relationship = editorManager.createRelationship(name);
-			angular.element($compile('<er-relationship model="relationship"></er-relationship>')(newScope))
+			angular.element($compile('<er-relationship id="{{relationship.id}}" on-destroy="$ctrl.removeRelationship(relationship)" model="relationship"></er-relationship>')(newScope))
 				.css({position: 'absolute', top: offset.top, left: offset.left - containerLeftOffset})
 				.appendTo(editorContainer);
 		};

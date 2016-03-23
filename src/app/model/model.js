@@ -109,9 +109,57 @@ Entity.prototype.summarize = function () {
  */
 function Relationship(name) {
 	this.name = name;
-	this.attributes = []
+	this.id = 'relationship-' + this.name;
+	this.attributes = [];
 	this.dom = null;
+	this.connectors = [];
 }
+
+
+Relationship.prototype.rename = function(newName) {
+	this.name = newName;
+	this.id = 'relationship-' + this.name;
+	this.dom.id = this.id;
+};
+
+Relationship.prototype.addAttribute = function (attributeData) {
+	var newAttr = new Attribute(attributeData);
+	this.attributes.push(newAttr);
+	return newAttr;
+};
+
+Relationship.prototype.getAttribute = function (index) {
+	return this.attributes[index];
+};
+
+Relationship.prototype.editAttribute = function (index, attributeData) {
+	this.attributes[index].updateData(attributeData);
+};
+
+Relationship.prototype.removeAttribute = function (index) {
+	// also delete connectors if needed
+	this.attributes.splice(index, 1);
+};
+
+Relationship.prototype.addConnectors = function (connectors) {
+	this.connectors.push(connectors);
+};
+
+Relationship.prototype.removeConnectors = function (connectors) {
+	var idx = this.connectors.indexOf(connectors);
+	if (idx === -1) {
+		return;
+	}
+	this.connectors.splice(idx, 1);
+};
+
+Relationship.prototype.destroy = function () {
+	this.attributes.forEach(function(e) {
+		e.destroy();
+	})
+	this.attributes = [];
+	this.dom[0].parentNode.removeChild(this.dom[0]);
+};
 
 /**
  * Attribute model
