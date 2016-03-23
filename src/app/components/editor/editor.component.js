@@ -22,7 +22,12 @@
 
 		ctrl.onDropHandler = function (event, ui) {
 			var offset = ui.offset;
+			offset.left = offset.left + $('.editor').scrollLeft();
+			offset.top = offset.top + $('.editor').scrollTop();
 
+			if (offset.left < Math.round(containerLeftOffset)) {
+				return;
+			}
 			// decide what diagram to add to the dom
 			switch (ui.draggable[0].id) {
 				case 'entity':
