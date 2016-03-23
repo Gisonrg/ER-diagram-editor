@@ -15,18 +15,23 @@
 			console.log('update from editor');
 		};
 
+		ctrl.removeEntity = function (entity) {
+			entity.destroy();
+			editorManager.removeEntity(entity);
+		};
+
 		ctrl.onDropHandler = function (event, ui) {
 			var offset = ui.offset;
 
 			// decide what diagram to add to the dom
 			switch (ui.draggable[0].id) {
-				case "entity":
+				case 'entity':
 					ctrl.askForEntityName('lg').then(function (name) {
 						console.log("Adding new entity named " + name + " to the editor");
 						ctrl.addNewEntity(offset, name);
 					}, null);
 					break;
-				case "relationship":
+				case 'relationship':
 					ctrl.askForEntityName('lg').then(function (name) {
 						console.log("Adding new relationship named " + name + " to the editor");
 						ctrl.addNewRelationship(offset, name);
@@ -38,16 +43,15 @@
 		};
 
 		ctrl.addNewEntity = function (offset, name) {
-			var newScope = $scope.$new(true);
-			newScope.entityId = 'entity-' + name;
+			var newScope = $scope.$new(false);
 			newScope.entity = editorManager.createEntity(name);
-			angular.element($compile('<er-entity id="{{entityId}}" entity="entity" on-update="$ctrl.update()"></er-entity>')(newScope))
+			angular.element($compile('<er-entity id="{{entity.id}}" entity="entity" on-update="$ctrl.update()" on-destroy="$ctrl.removeEntity(entity)"></er-entity>')(newScope))
 				.css({position: 'absolute', top: offset.top, left: offset.left - containerLeftOffset})
 				.appendTo(editorContainer);
 		};
 
 		ctrl.addNewRelationship = function (offset, name) {
-			var newScope = $scope.$new(true);
+			var newScope = $scope.$new(false);
 			newScope.relationship = editorManager.createRelationship(name);
 			angular.element($compile('<er-relationship model="relationship"></er-relationship>')(newScope))
 				.css({position: 'absolute', top: offset.top, left: offset.left - containerLeftOffset})

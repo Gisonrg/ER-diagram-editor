@@ -13,6 +13,14 @@
 			return entity;
 		};
 
+		manager.removeEntity = function (entity) {
+			var idx = entities.indexOf(entity);
+			if (idx === -1) {
+				return;
+			}
+			entities.splice(idx, 1);
+		};
+
 		manager.createRelationship = function (name) {
 			var relationship = new Relationship(name);
 			relationships.push(entity);

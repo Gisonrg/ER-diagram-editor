@@ -7,49 +7,53 @@
         <div class="modal-header">
             <h3 class="modal-title">{{title}}</h3>
         </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" class="form-control" id="name" ng-model="data">
+        <form>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" id="name" ng-model="data">
+                </div>
             </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
-            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
-        </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="submit" ng-click="ok()">OK</button>
+                <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+        </form>
     </script>
     <script type="text/ng-template" id="new-attribute-prompt.html">
         <div class="modal-header">
             <h3 class="modal-title">{{title}}</h3>
         </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label for="name">Attribute name</label>
-                <input type="text" class="form-control" id="name" ng-model="data.name">
+        <form>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="name">Attribute name</label>
+                    <input type="text" class="form-control" id="name" ng-model="data.name">
+                </div>
+                <div class="form-group">
+                    <label for="name">Type</label>
+                    <select ng-options="type as type.name for type in typeList"
+                            ng-model="data.type"></select>
+                </div>
+                <div class="form-group" ng-if="data.type.hasLength">
+                    <label for="name">Length</label>
+                    <input type="number" class="form-control" id="name" ng-model="data.type.length" min="0" max="65535">
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input ng-model="data.notNull" type="checkbox"> Not null
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input ng-model="data.isPrimaryKey" type="checkbox" ng-change="togglePrimaryKey()"> Primary Key
+                    </label>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="name">Type</label>
-                <select ng-options="type as type.name for type in typeList"
-                        ng-model="data.type"></select>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="submit" ng-click="ok()">OK</button>
+                <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
             </div>
-            <div class="form-group" ng-if="data.type.hasLength">
-                <label for="name">Length</label>
-                <input type="number" class="form-control" id="name" ng-model="data.type.length" min="0" max="65535">
-            </div>
-            <div class="checkbox">
-                <label>
-                    <input ng-model="data.notNull" type="checkbox"> Not null
-                </label>
-            </div>
-            <div class="checkbox">
-                <label>
-                    <input ng-model="data.isPrimaryKey" type="checkbox" ng-change="togglePrimaryKey()"> Primary Key
-                </label>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
-            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
-        </div>
+        </form>
     </script>
 </div>

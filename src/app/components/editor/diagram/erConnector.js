@@ -32,10 +32,12 @@ Connector.prototype.redraw = function () {
 		containerLeftOffset = angular.element('.editor-container').offset().left;
 
 	// for drawing
-	var fromX = Math.round(this.fromModel.dom.position().left + width / 2);
-	var fromY = Math.round(this.fromModel.dom.position().top + height / 2);
-	var toX = Math.round(this.attributeModel.dom.offset().left + elementWidth - containerLeftOffset);
-	var toY = Math.round(this.attributeModel.dom.offset().top + elementHeight);
+	var fromPosition = this.fromModel.dom.position();
+	var attributeOffset = this.attributeModel.dom.offset();
+	var fromX = Math.round(fromPosition.left + width / 2);
+	var fromY = Math.round(fromPosition.top + height / 2);
+	var toX = Math.round(attributeOffset.left + elementWidth - containerLeftOffset);
+	var toY = Math.round(attributeOffset.top + elementHeight);
 
 	this.dom.setAttribute('d', 'M ' + fromX + ' ' + fromY + ' L ' + toX + ' ' + toY + ' Z');
 }
