@@ -27,6 +27,14 @@
 			return relationship;
 		};
 
+		manager.removeRelationship = function (relationship) {
+			var idx = relationships.indexOf(relationship);
+			if (idx === -1) {
+				return;
+			}
+			relationships.splice(idx, 1);
+		};
+
 		manager.generateSchemaData = function () {
 			var data = {
 				entities: []
