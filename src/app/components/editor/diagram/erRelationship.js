@@ -112,6 +112,9 @@
 		ctrl.addAttribute = function () {
 			ctrl.addNewAttributeModal().then(function (data) {
 				var newAttr = ctrl.model.addAttribute(data);
+				if (!newAttr) {
+					return alert('The attribute name already exists in this relationship');
+				}
 				ctrl.addConnectors(new Connector(ctrl.model, newAttr));
 			});
 		};
@@ -122,7 +125,10 @@
 		 */
 		ctrl.editAttribute = function (index) {
 			ctrl.editAttributeModal(ctrl.model.getAttribute(index)).then(function (data) {
-				ctrl.model.editAttribute(index, data);
+				var res = ctrl.model.editAttribute(index, data);
+				if (!res) {
+					return alert('The attribute name already exists in this relationship');
+				}
 				ctrl.redrawConnectors();
 			});
 		};

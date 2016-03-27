@@ -83,6 +83,9 @@
 		ctrl.addAttribute = function ($itemScope) {
 			ctrl.addNewAttributeModal().then(function (data) {
 				var newAttr = ctrl.entity.addAttribute(data);
+				if (!newAttr) {
+					return alert('The attribute name already exists in this entity');
+				}
 				ctrl.addConnectors(new Connector(ctrl.entity, newAttr));
 			});
 		};
@@ -93,7 +96,10 @@
 		 */
 		ctrl.editAttribute = function (index) {
 			ctrl.editAttributeModal(ctrl.entity.getAttribute(index)).then(function (data) {
-				ctrl.entity.editAttribute(index, data);
+				var result = ctrl.entity.editAttribute(index, data);
+				if (!result) {
+					return alert('The attribute name already exists in this entity');
+				}
 				ctrl.redrawConnectors();
 			});
 		};
