@@ -69,3 +69,8 @@ bower_components
 
 # hide generated css file
 src/asset/css
+
+src/index.html
+
+# hide dist folder
+dist
