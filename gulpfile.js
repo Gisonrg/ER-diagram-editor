@@ -5,12 +5,10 @@ var angularFilesort = require('gulp-angular-filesort');
 var sass = require('gulp-sass');
 var browserSync = require('browser-sync').create();
 var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 var minifyCSS = require('gulp-minify-css');
 var del = require('del');
 var runSequence = require('run-sequence');
-var debug = require('gulp-debug');
 
 var paths = {
 	js: [
@@ -60,8 +58,9 @@ gulp.task('sass', function () {
 });
 
 // inject source files
-gulp.task('index:vendor', function () {
-	gulp.src('./src/index.html')
+gulp.task('index', function () {
+	var target = gulp.src('./src/index.html');
+	return target
 		.pipe(inject(
 			gulp.src(paths.vendorJs, {read: false}),
 			{relative: true, name: 'vendor'}
@@ -70,11 +69,6 @@ gulp.task('index:vendor', function () {
 			gulp.src(paths.vendorStyle, {read: false}),
 			{relative: true, name: 'vendor'}
 		))
-		.pipe(gulp.dest('./src'));
-});
-
-gulp.task('index:js', function () {
-	gulp.src('./src/index.html')
 		.pipe(inject(
 			gulp.src(paths.js)
 				.pipe(angularFilesort())
@@ -171,13 +165,15 @@ gulp.task('dist:serve', function () {
 	});
 });
 
-gulp.task('index', ['index:vendor', 'index:js']);
 gulp.task('dist:index', function() {
 	runSequence(
 		'dist:index-copy', 'dist:index-all'
 	);
 });
-gulp.task('default', ['sass', 'index', 'serve']);
+
+gulp.task('default', function() {
+	runSequence('sass', 'index', 'serve');
+});
 gulp.task('dist', function () {
 	runSequence(
 		'dist:clean',
