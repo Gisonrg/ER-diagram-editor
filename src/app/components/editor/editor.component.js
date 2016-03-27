@@ -53,6 +53,11 @@
 		};
 
 		ctrl.addNewEntity = function (offset, name) {
+			// check for the name
+			if (!editorManager.isNameAvailable(name)) {
+				alert('The name already exists in the database.');
+				return;
+			}
 			var newScope = $scope.$new(false);
 			newScope.entity = editorManager.createEntity(name);
 			angular.element($compile('<er-entity id="{{entity.id}}" entity="entity" on-update="$ctrl.update()" on-destroy="$ctrl.removeEntity(entity)"></er-entity>')(newScope))
@@ -61,6 +66,10 @@
 		};
 
 		ctrl.addNewRelationship = function (offset, name) {
+			if (!editorManager.isNameAvailable(name)) {
+				alert('The name already exists in the database.');
+				return;
+			}
 			var newScope = $scope.$new(false);
 			newScope.relationship = editorManager.createRelationship(name);
 			angular.element($compile('<er-relationship id="{{relationship.id}}" on-destroy="$ctrl.removeRelationship(relationship)" model="relationship"></er-relationship>')(newScope))
