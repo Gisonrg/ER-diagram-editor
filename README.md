@@ -15,3 +15,6 @@ An editor to interactively draw, save and edit entity-relationship diagrams
 3. `npm install`
 4. `bower install`
 5. `gulp` to start develop and automate all compiling/injecting process. Changes will be automatically refreshed and reflected in browser as well.
+
+## Deployment
+1. `gulp dist`
