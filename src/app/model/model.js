@@ -1,18 +1,3 @@
-(function (angular) {
-	'use strict';
-	angular.module('myApp.model', []);
-
-	angular.module('myApp.model')
-		.constant('DataType', [
-			new DataType('INTEGER'),
-			new DataType('NUMERIC'),
-			new DataType('VARCHAR', 128),
-			new DataType('TEXT'),
-			new DataType('DATE'),
-			new DataType('TIMESTAMP')
-		]);
-})(window.angular);
-
 /**
  * Models shared globally
  */
@@ -36,7 +21,18 @@ Entity.prototype.rename = function(newName) {
 	this.dom.id = this.id;
 };
 
+Entity.prototype.isDuplicateAttributeName = function (name) {
+	return this.attributes.some(function(attr) {
+		return attr.name.toLowerCase() === name.toLowerCase();
+	});
+}
+
 Entity.prototype.addAttribute = function (attributeData) {
+	// check for duplicate name first
+	if (this.isDuplicateAttributeName(attributeData.name)) {
+		return false;
+	}
+
 	var newAttr = new Attribute(attributeData);
 	this.attributes.push(newAttr);
 	return newAttr;
@@ -46,8 +42,24 @@ Entity.prototype.getAttribute = function (index) {
 	return this.attributes[index];
 };
 
+/**
+ *
+ * @param index
+ * @param attributeData
+ * @returns {boolean} if the edit operation succeed or not
+ */
 Entity.prototype.editAttribute = function (index, attributeData) {
+	if (this.attributes[index].name.toLowerCase() === attributeData.name.toLowerCase()) {
+		this.attributes[index].updateData(attributeData);
+		return true;
+	}
+
+	if (this.isDuplicateAttributeName(attributeData.name)) {
+		return false;
+	}
+
 	this.attributes[index].updateData(attributeData);
+	return true;
 };
 
 Entity.prototype.removeAttribute = function (index) {
@@ -122,7 +134,18 @@ Relationship.prototype.rename = function(newName) {
 	this.dom.id = this.id;
 };
 
+Relationship.prototype.isDuplicateAttributeName = function (name) {
+	return this.attributes.some(function(attr) {
+		return attr.name.toLowerCase() === name.toLowerCase();
+	});
+}
+
 Relationship.prototype.addAttribute = function (attributeData) {
+	// check for duplicate name first
+	if (this.isDuplicateAttributeName(attributeData.name)) {
+		return false;
+	}
+
 	var newAttr = new Attribute(attributeData);
 	this.attributes.push(newAttr);
 	return newAttr;
@@ -133,7 +156,16 @@ Relationship.prototype.getAttribute = function (index) {
 };
 
 Relationship.prototype.editAttribute = function (index, attributeData) {
+	if (this.attributes[index].name.toLowerCase() === attributeData.name.toLowerCase()) {
+		this.attributes[index].updateData(attributeData);
+		return true;
+	}
+
+	if (this.isDuplicateAttributeName(attributeData.name)) {
+		return false;
+	}
 	this.attributes[index].updateData(attributeData);
+	return true;
 };
 
 Relationship.prototype.removeAttribute = function (index) {

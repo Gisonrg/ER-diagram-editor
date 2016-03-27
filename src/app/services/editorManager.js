@@ -23,7 +23,7 @@
 
 		manager.createRelationship = function (name) {
 			var relationship = new Relationship(name);
-			relationships.push(entity);
+			relationships.push(relationship);
 			return relationship;
 		};
 
@@ -33,6 +33,27 @@
 				return;
 			}
 			relationships.splice(idx, 1);
+		};
+
+		/**
+		 *
+		 * @param name String the name of entity/relationship
+		 * @return boolean if the name is available
+		 */
+		manager.isNameAvailable = function (name) {
+			var hasDuplicate = false;
+			entities.forEach(function (entity) {
+				if (name.toLowerCase() === entity.name.toLowerCase()) {
+					hasDuplicate = true;
+				}
+			});
+			relationships.forEach(function (relationship) {
+				if (name.toLowerCase() === relationship.name.toLowerCase()) {
+					hasDuplicate = true;
+				}
+			});
+
+			return hasDuplicate ? false : true;
 		};
 
 		manager.generateSchemaData = function () {
