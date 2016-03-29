@@ -85,16 +85,24 @@
 				}
 			});
 			if (hasConnected) {
-				console.log('already connected with ' + toEntity.name)
 				return;
 			}
 			ctrl.relationConnectors.push(new RelationConnector(ctrl.model, toEntity));
 		};
 
-		ctrl.removeRelationConnectors = function (index) {
-			var relationConnectors = ctrl.relationConnectors[index];
-			relationConnectors.destroy();
-			ctrl.relationConnectors.splice(index, 1);
+		ctrl.removeRelationConnectors = function (toEntity) {
+			var flag = -1;
+			for (var i = 0; i < ctrl.relationConnectors.length; i++) {
+				var relationConnector = ctrl.relationConnectors[i];
+				if (relationConnector.diagram2 === toEntity || relationConnector.diagram1 === toEntity) {
+					flag = i;
+					break;
+				}
+			}
+			if (flag != -1) {
+				ctrl.relationConnectors[flag].destroy();
+				ctrl.relationConnectors.splice(flag, 1);
+			}
 		};
 
 		ctrl.addConnectors = function (connector) {
@@ -108,7 +116,9 @@
 		};
 
 		ctrl.showDetail = function () {
-			console.log('show detail');
+			ctrl.model.references.forEach(function(x) {
+				console.log(x.name + ' references ' + x.from.entity.name + '\'s ' + x.from.attribute.name + ' attribute.');
+			});
 		};
 
 		/*
@@ -159,7 +169,7 @@
 
 		ctrl.addCreateReference = function () {
 			ctrl.onAddReference().then(function(data) {
-				var res = ctrl.model.addReference(data);
+				var res = ctrl.model.addReference(ctrl, data);
 				if (!res) {
 					return alert('This reference already exists in this relationship');
 				}
@@ -167,6 +177,30 @@
 				ctrl.addRelationConnectors(data.entity);
 				ctrl.redrawRelationConnectors();
 			});
+		};
+
+		ctrl.isUniqueReference = function (reference) {
+			var res = ctrl.model.references.some(function(ref) {
+				if (ref !== reference && ref.from.entity === reference.from.entity) {
+					return true;
+				}
+			});
+			return !res;
+		};
+
+		// handler to remove reference
+		ctrl.removeReference = function (reference) {
+
+		};
+
+		// handler for remove reference when cascading
+		ctrl.onRemoveReference = function (reference) {
+			// first, if this is the only reference to that entity, we will remove the relation connector
+			// next, remove it from the relationship model
+			if (ctrl.isUniqueReference(reference)) {
+				ctrl.removeRelationConnectors(reference.from.entity);
+			}
+			ctrl.model.removeReference(reference);
 		};
 
 		/**

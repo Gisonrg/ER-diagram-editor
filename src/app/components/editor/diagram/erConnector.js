@@ -84,7 +84,5 @@ RelationConnector.prototype.redraw = function () {
 RelationConnector.prototype.destroy = function () {
 	this.diagram1.removeRelationConnector(this);
 	this.diagram2.removeRelationConnector(this);
-	this.diagram1 = null;
-	this.diagram2 = null;
 	this.dom.parentNode.removeChild(this.dom);
 }

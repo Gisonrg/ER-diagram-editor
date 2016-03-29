@@ -64,7 +64,8 @@ Entity.prototype.editAttribute = function (index, attributeData) {
 };
 
 Entity.prototype.removeAttribute = function (index) {
-	// also delete connectors if needed
+	var attr = this.attributes[index];
+	attr.destroy();
 	this.attributes.splice(index, 1);
 };
 
@@ -193,15 +194,25 @@ Relationship.prototype.removeAttribute = function (index) {
 	this.attributes.splice(index, 1);
 };
 
-Relationship.prototype.addReference = function (data) {
+Relationship.prototype.addReference = function (ctrl, data) {
 	// check for duplicate name first
 	if (this.isDuplicateReference(data.entity, data.attribute)) {
 		return false;
 	}
-
-	var reference = new Reference(this, data.entity, data.attribute, data.name, data.type, data.isPrimaryKey);
+	var reference = new Reference(ctrl, this, data.entity, data.attribute, data.name, data.type, data.isPrimaryKey);
+	// add to relationship
 	this.references.push(reference);
+	// add to referenced attribute
+	data.attribute.addReference(reference);
 	return reference;
+};
+
+Relationship.prototype.removeReference = function (reference) {
+	var idx = this.references.indexOf(reference);
+	if (idx === -1) {
+		return;
+	}
+	this.references.splice(idx, 1);
 };
 
 Relationship.prototype.addConnectors = function (connectors) {
@@ -293,12 +304,18 @@ Attribute.prototype.removeConnectors = function (connectors) {
 };
 
 Attribute.prototype.destroy = function () {
+	this.references.forEach(function(ref) {
+		// remove it from the owner ctrl and model
+		ref.ownerCtrl.onRemoveReference(ref);
+	});
+	this.references = [];
 	this.dom[0].parentNode.removeChild(this.dom[0]);
 };
 
 /**
  *
  * Reference model
+ * @param ownerCtrl
  * @param {Relationship} owner
  * @param {Entity} fromEntity
  * @param {Attribute} fromAttribute
@@ -306,8 +323,9 @@ Attribute.prototype.destroy = function () {
  * @param {boolean} isPrimaryKey
  * @constructor
  */
-function Reference(owner, fromEntity, fromAttribute, name, type, isPrimaryKey) {
+function Reference(ownerCtrl, owner, fromEntity, fromAttribute, name, type, isPrimaryKey) {
 	this.name = name;
+	this.ownerCtrl = ownerCtrl;
 	this.owner = owner;
 	this.type = type;
 	this.from = {};
@@ -315,6 +333,11 @@ function Reference(owner, fromEntity, fromAttribute, name, type, isPrimaryKey) {
 	this.from.attribute = fromAttribute;
 	this.isPrimaryKey = isPrimaryKey;
 }
+
+Reference.prototype.destory = function () {
+	this.owner.removeReference(this);
+	this.from.attribute.removeReference(this);
+};
 
 /**
  * DataType model
