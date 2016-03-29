@@ -107,6 +107,10 @@
 			this.connectors.splice(index, 1);
 		};
 
+		ctrl.showDetail = function () {
+			console.log('show detail');
+		};
+
 		/*
 		 Context menu
 		 */

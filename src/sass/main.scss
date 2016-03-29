@@ -146,6 +146,10 @@ html, body {
   @include unselectable();
 }
 
+.relationship-model-name {
+  cursor: pointer;
+}
+
 .primary-key {
   font-weight: bold;
 }
