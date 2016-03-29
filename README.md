@@ -18,3 +18,4 @@ An editor to interactively draw, save and edit entity-relationship diagrams
 
 ## Deployment
 1. `gulp dist`
+2. `gulp deploy`
