@@ -35,6 +35,10 @@
 			relationships.splice(idx, 1);
 		};
 
+		manager.getAllEntities = function () {
+			return entities;
+		}
+
 		/**
 		 *
 		 * @param name String the name of entity/relationship
