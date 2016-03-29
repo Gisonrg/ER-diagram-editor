@@ -9,6 +9,7 @@ var rename = require('gulp-rename');
 var minifyCSS = require('gulp-minify-css');
 var del = require('del');
 var runSequence = require('run-sequence');
+var ghPages = require('gulp-gh-pages');
 
 var paths = {
 	js: [
@@ -182,4 +183,9 @@ gulp.task('dist', function () {
 		'dist:index',
 		'dist:serve'
 	);
+});
+
+gulp.task('deploy', function() {
+	return gulp.src('./dist/**/*')
+		.pipe(ghPages());
 });
