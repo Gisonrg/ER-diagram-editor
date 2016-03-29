@@ -74,3 +74,5 @@ src/index.html
 
 # hide dist folder
 dist
+
+.publish

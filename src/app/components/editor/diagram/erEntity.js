@@ -19,6 +19,7 @@
 					}
 
 					ctrl.redrawConnectors();
+					ctrl.redrawRelationConnectors();
 				}
 			});
 		};
@@ -63,6 +64,12 @@
 
 		ctrl.redrawConnectors = function () {
 			ctrl.connectors.forEach(function (e) {
+				e.redraw();
+			});
+		};
+
+		ctrl.redrawRelationConnectors = function () {
+			ctrl.entity.relationConnectors.forEach(function (e) {
 				e.redraw();
 			});
 		};
