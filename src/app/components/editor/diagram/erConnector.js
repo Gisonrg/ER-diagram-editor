@@ -44,3 +44,47 @@ Connector.prototype.destroy = function () {
 	this.attributeModel.removeConnectors(this);
 	this.dom.parentNode.removeChild(this.dom);
 }
+
+/**
+ *
+ * @param {Entity|Relationship} diagram1
+ * @param {Entity|Relationship} diagram2
+ * @constructor
+ */
+function RelationConnector(diagram1, diagram2) {
+	this.diagram1 = diagram1;
+	this.diagram2 = diagram2;
+
+	this.diagram1.addRelationConnector(this);
+	this.diagram2.addRelationConnector(this);
+
+	var svg = document.getElementById('editor-canvas'); //Get svg element
+	var path = document.createElementNS('http://www.w3.org/2000/svg', 'path'); //Create a path in SVG's namespace
+	path.style.stroke = 'black'; //Set stroke colour
+	path.style.strokeWidth = '1px'; //Set stroke width
+	svg.appendChild(path);
+	this.dom = path;
+}
+
+RelationConnector.prototype.redraw = function () {
+	var fromWidth = this.diagram1.dom.width(),
+		fromHeight = this.diagram1.dom.height();
+	var toWidth = this.diagram2.dom.width(),
+		toHeight = this.diagram2.dom.height();
+	// for drawing
+	var fromPosition = this.diagram1.dom.position();
+	var toPosition = this.diagram2.dom.position();
+	var fromX = Math.round(fromPosition.left + fromWidth / 2);
+	var fromY = Math.round(fromPosition.top + fromHeight / 2);
+	var toX = Math.round(toPosition.left + toWidth / 2);
+	var toY = Math.round(toPosition.top + toHeight / 2);
+	this.dom.setAttribute('d', 'M ' + fromX + ' ' + fromY + ' L ' + toX + ' ' + toY + ' Z');
+}
+
+RelationConnector.prototype.destroy = function () {
+	this.diagram1.removeRelationConnector(this);
+	this.diagram2.removeRelationConnector(this);
+	this.diagram1 = null;
+	this.diagram2 = null;
+	this.dom.parentNode.removeChild(this.dom);
+}

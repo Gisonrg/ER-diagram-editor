@@ -18,6 +18,7 @@
 						ui.position.top = 0;
 					}
 					ctrl.redrawConnectors();
+					ctrl.redrawRelationConnectors();
 				}
 			});
 		};
@@ -66,6 +67,12 @@
 			});
 		};
 
+		ctrl.redrawRelationConnectors = function () {
+			ctrl.model.relationConnectors.forEach(function (e) {
+				e.redraw();
+			});
+		};
+
 		ctrl.addConnectors = function (connector) {
 			ctrl.connectors.push(connector);
 		};
@@ -82,6 +89,9 @@
 		ctrl.menuOptions = [
 			['Add attribute', function () {
 				ctrl.addAttribute();
+			}],
+			['Add reference', function () {
+				ctrl.addCreateReference();
 			}],
 			null,
 			['Rename', function () {
@@ -116,6 +126,16 @@
 					return alert('The attribute name already exists in this relationship');
 				}
 				ctrl.addConnectors(new Connector(ctrl.model, newAttr));
+			});
+		};
+
+		ctrl.addCreateReference = function () {
+			ctrl.onAddReference().then(function(data) {
+				var reference = new Reference(this, data.entity, data.attribute, data.name, data.type, data.isPrimaryKey);
+				ctrl.model.addReference(reference);
+				// then connect entity with this relationship
+				new RelationConnector(ctrl.model, data.entity);
+				ctrl.redrawRelationConnectors();
 			});
 		};
 
@@ -182,7 +202,6 @@
 
 		/**
 		 *
-		 * @param size modal size
 		 * @param attribute the Attribute model
 		 * @returns {*}
 		 */
@@ -216,7 +235,8 @@
 	angular.module('editor').component('erRelationship', {
 		bindings: {
 			model: '<',
-			onDestroy: '&'
+			onDestroy: '&',
+			onAddReference: '&'
 		},
 		templateUrl: './app/components/editor/diagram/erRelationship.html',
 		controller: RelationshipController

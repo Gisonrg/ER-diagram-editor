@@ -1,8 +1,8 @@
-
 <div class="editor">
     <svg id="editor-canvas">
     </svg>
-    <div class="editor-container" data-drop="true" jqyoui-droppable="{'onDrop' : '$ctrl.onDropHandler()'}" data-jqyoui-options="{'accept': '.toolbar-diagram'}">
+    <div class="editor-container" data-drop="true" jqyoui-droppable="{'onDrop' : '$ctrl.onDropHandler()'}"
+         data-jqyoui-options="{'accept': '.toolbar-diagram'}">
     </div>
     <script type="text/ng-template" id="input-prompt.html">
         <div class="modal-header">
@@ -38,7 +38,7 @@
                 </div>
                 <div class="form-group" ng-if="data.type.hasLength">
                     <label for="name">Length</label>
-                    <input type="number" class="form-control" id="name" ng-model="data.type.length" min="0" max="65535">
+                    <input type="number" class="form-control" ng-model="data.type.length" min="0" max="65535">
                 </div>
                 <div class="checkbox">
                     <label>
@@ -53,6 +53,50 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" type="submit" ng-click="ok()">OK</button>
+                <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+            </div>
+        </form>
+    </script>
+    <script type="text/ng-template" id="new-reference-prompt.html">
+        <div class="modal-header">
+            <h3 class="modal-title">{{title}}</h3>
+        </div>
+        <form name="referenceForm">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Reference Entity</label>
+                    <select ng-options="entity as entity.name for entity in entities"
+                            ng-model="data.entity" ng-change="updateSelectedAttribute()"></select>
+                </div>
+                <div class="form-group">
+                    <label>Reference Attribute of the entity</label>
+                    <select ng-options="attr as attr.name for attr in data.entity.attributes"
+                            ng-model="data.attribute"></select>
+                </div>
+                <div class="form-group" ng-if="data.attribute" ng-class="{ 'has-error' : referenceForm.name.$error.pattern || referenceForm.name.$error.required}">
+                    <label for="name">Attribute name</label>
+                    <input type="text" class="form-control" name="name" id="name" ng-pattern="/^[a-zA-Z_][a-zA-Z0-9_]*$/"
+                           ng-model="data.name" required ng-trim="false">
+                    <span ng-show="referenceForm.name.$error.pattern || referenceForm.name.$error.required" class="help-block">Please check your name format.</span>
+                </div>
+                <div class="form-group" ng-if="data.attribute">
+                    <label>Type</label>
+                    <select ng-options="type as type.name for type in typeList"
+                            ng-model="data.type" ng-disabled="data.attribute"></select>
+                </div>
+                <div class="form-group" ng-if="data.type.hasLength">
+                    <label>Length</label>
+                    <input type="number" class="form-control" ng-disabled="data.attribute" ng-model="data.type.length"
+                           min="0" max="65535">
+                </div>
+                <div class="checkbox" ng-if="data.attribute">
+                    <label>
+                        <input ng-model="data.isPrimaryKey" type="checkbox"> Primary Key
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" ng-disabled="!data.attribute || referenceForm.name.$error.pattern || !data.name || data.name.length === 0" type="submit" ng-click="ok()">OK</button>
                 <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
             </div>
         </form>

@@ -13,6 +13,7 @@ function Entity(name) {
 	this.attributes = [];
 	this.dom = null;
 	this.connectors = [];
+	this.relationConnectors = [];
 }
 
 Entity.prototype.rename = function(newName) {
@@ -79,6 +80,18 @@ Entity.prototype.removeConnectors = function (connectors) {
 	this.connectors.splice(idx, 1);
 };
 
+Entity.prototype.addRelationConnector = function (connector) {
+	this.relationConnectors.push(connector);
+};
+
+Entity.prototype.removeRelationConnector = function (connector) {
+	var idx = this.relationConnectors.indexOf(connector);
+	if (idx === -1) {
+		return;
+	}
+	this.relationConnectors.splice(idx, 1);
+};
+
 Entity.prototype.destroy = function () {
 	this.attributes.forEach(function(e) {
 		e.destroy();
@@ -125,8 +138,9 @@ function Relationship(name) {
 	this.attributes = [];
 	this.dom = null;
 	this.connectors = [];
+	this.references = [];
+	this.relationConnectors = [];
 }
-
 
 Relationship.prototype.rename = function(newName) {
 	this.name = newName;
@@ -173,6 +187,10 @@ Relationship.prototype.removeAttribute = function (index) {
 	this.attributes.splice(index, 1);
 };
 
+Relationship.prototype.addReference = function (reference) {
+	this.references.push(reference);
+};
+
 Relationship.prototype.addConnectors = function (connectors) {
 	this.connectors.push(connectors);
 };
@@ -183,6 +201,18 @@ Relationship.prototype.removeConnectors = function (connectors) {
 		return;
 	}
 	this.connectors.splice(idx, 1);
+};
+
+Relationship.prototype.addRelationConnector = function (connector) {
+	this.relationConnectors.push(connector);
+};
+
+Relationship.prototype.removeRelationConnector = function (connector) {
+	var idx = this.relationConnectors.indexOf(connector);
+	if (idx === -1) {
+		return;
+	}
+	this.relationConnectors.splice(idx, 1);
 };
 
 Relationship.prototype.destroy = function () {
@@ -208,6 +238,7 @@ function Attribute(attributeData) {
 
 	this.dom = null;
 	this.connectors = [];
+	this.references = []; // keep the references
 }
 
 Attribute.prototype.updateData = function (attributeData) {
@@ -222,6 +253,24 @@ Attribute.prototype.addConnectors = function (connectors) {
 	this.connectors.push(connectors);
 };
 
+/**
+ *
+ * @param {Reference} reference
+ */
+Attribute.prototype.addReference = function (reference) {
+	this.references.push(reference);
+};
+
+/**
+ *
+ * @param {Reference} r
+ */
+Attribute.prototype.removeReference = function(r) {
+	var idx = this.references.indexOf(r);
+	if (idx == -1) { return; }
+	this.references.splice(idx,1);
+}
+
 Attribute.prototype.removeConnectors = function (connectors) {
 	var idx = this.connectors.indexOf(connectors);
 	if (idx === -1) {
@@ -233,6 +282,26 @@ Attribute.prototype.removeConnectors = function (connectors) {
 Attribute.prototype.destroy = function () {
 	this.dom[0].parentNode.removeChild(this.dom[0]);
 };
+
+/**
+ *
+ * Reference model
+ * @param owner
+ * @param {Entity} fromEntity
+ * @param {Attribute} fromAttribute
+ * @param {string} name
+ * @param {boolean} isPrimaryKey
+ * @constructor
+ */
+function Reference(owner, fromEntity, fromAttribute, name, type, isPrimaryKey) {
+	this.name = name;
+	this.owner = owner;
+	this.type = type;
+	this.from = {};
+	this.from.entity = fromEntity;
+	this.from.attribute = fromAttribute;
+	this.isPrimaryKey = isPrimaryKey;
+}
 
 /**
  * DataType model
