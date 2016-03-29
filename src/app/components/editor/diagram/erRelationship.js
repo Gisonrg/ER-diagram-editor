@@ -5,6 +5,7 @@
 		var ctrl = this;
 
 		ctrl.connectors = [];
+		ctrl.relationConnectors = [];
 
 		ctrl.$onInit = function () {
 			ctrl.model.dom = $element;
@@ -68,9 +69,32 @@
 		};
 
 		ctrl.redrawRelationConnectors = function () {
-			ctrl.model.relationConnectors.forEach(function (e) {
+			ctrl.relationConnectors.forEach(function (e) {
 				e.redraw();
 			});
+		};
+
+		/**
+		 *
+		 * @param {Entity} toEntity
+		 */
+		ctrl.addRelationConnectors = function (toEntity) {
+			var hasConnected = ctrl.relationConnectors.some(function(connector) {
+				if (connector.diagram2 === toEntity || connector.diagram1 === toEntity) {
+					return true;
+				}
+			});
+			if (hasConnected) {
+				console.log('already connected with ' + toEntity.name)
+				return;
+			}
+			ctrl.relationConnectors.push(new RelationConnector(ctrl.model, toEntity));
+		};
+
+		ctrl.removeRelationConnectors = function (index) {
+			var relationConnectors = ctrl.relationConnectors[index];
+			relationConnectors.destroy();
+			this.relationConnectors.splice(index, 1);
 		};
 
 		ctrl.addConnectors = function (connector) {
@@ -131,10 +155,12 @@
 
 		ctrl.addCreateReference = function () {
 			ctrl.onAddReference().then(function(data) {
-				var reference = new Reference(this, data.entity, data.attribute, data.name, data.type, data.isPrimaryKey);
-				ctrl.model.addReference(reference);
+				var res = ctrl.model.addReference(data);
+				if (!res) {
+					return alert('This reference already exists in this relationship');
+				}
 				// then connect entity with this relationship
-				new RelationConnector(ctrl.model, data.entity);
+				ctrl.addRelationConnectors(data.entity);
 				ctrl.redrawRelationConnectors();
 			});
 		};

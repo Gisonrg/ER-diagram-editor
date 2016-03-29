@@ -154,6 +154,12 @@ Relationship.prototype.isDuplicateAttributeName = function (name) {
 	});
 }
 
+Relationship.prototype.isDuplicateReference = function (entity, attribute) {
+	return this.references.some(function(ref) {
+		return ref.from.entity === entity && ref.from.attribute === attribute;
+	});
+}
+
 Relationship.prototype.addAttribute = function (attributeData) {
 	// check for duplicate name first
 	if (this.isDuplicateAttributeName(attributeData.name)) {
@@ -187,8 +193,15 @@ Relationship.prototype.removeAttribute = function (index) {
 	this.attributes.splice(index, 1);
 };
 
-Relationship.prototype.addReference = function (reference) {
+Relationship.prototype.addReference = function (data) {
+	// check for duplicate name first
+	if (this.isDuplicateReference(data.entity, data.attribute)) {
+		return false;
+	}
+
+	var reference = new Reference(this, data.entity, data.attribute, data.name, data.type, data.isPrimaryKey);
 	this.references.push(reference);
+	return reference;
 };
 
 Relationship.prototype.addConnectors = function (connectors) {
@@ -286,7 +299,7 @@ Attribute.prototype.destroy = function () {
 /**
  *
  * Reference model
- * @param owner
+ * @param {Relationship} owner
  * @param {Entity} fromEntity
  * @param {Attribute} fromAttribute
  * @param {string} name
