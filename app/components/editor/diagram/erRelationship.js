@@ -5,6 +5,7 @@
 		var ctrl = this;
 
 		ctrl.connectors = [];
+		ctrl.relationConnectors = [];
 
 		ctrl.$onInit = function () {
 			ctrl.model.dom = $element;
@@ -18,6 +19,7 @@
 						ui.position.top = 0;
 					}
 					ctrl.redrawConnectors();
+					ctrl.redrawRelationConnectors();
 				}
 			});
 		};
@@ -66,6 +68,43 @@
 			});
 		};
 
+		ctrl.redrawRelationConnectors = function () {
+			ctrl.relationConnectors.forEach(function (e) {
+				e.redraw();
+			});
+		};
+
+		/**
+		 *
+		 * @param {Entity} toEntity
+		 */
+		ctrl.addRelationConnectors = function (toEntity) {
+			var hasConnected = ctrl.relationConnectors.some(function(connector) {
+				if (connector.diagram2 === toEntity || connector.diagram1 === toEntity) {
+					return true;
+				}
+			});
+			if (hasConnected) {
+				return;
+			}
+			ctrl.relationConnectors.push(new RelationConnector(ctrl.model, toEntity));
+		};
+
+		ctrl.removeRelationConnectors = function (toEntity) {
+			var flag = -1;
+			for (var i = 0; i < ctrl.relationConnectors.length; i++) {
+				var relationConnector = ctrl.relationConnectors[i];
+				if (relationConnector.diagram2 === toEntity || relationConnector.diagram1 === toEntity) {
+					flag = i;
+					break;
+				}
+			}
+			if (flag != -1) {
+				ctrl.relationConnectors[flag].destroy();
+				ctrl.relationConnectors.splice(flag, 1);
+			}
+		};
+
 		ctrl.addConnectors = function (connector) {
 			ctrl.connectors.push(connector);
 		};
@@ -73,7 +112,13 @@
 		ctrl.removeConnectors = function (index) {
 			var connector = ctrl.connectors[index];
 			connector.destroy();
-			this.connectors.splice(index, 1);
+			ctrl.connectors.splice(index, 1);
+		};
+
+		ctrl.showDetail = function () {
+			ctrl.model.references.forEach(function(x) {
+				console.log(x.name + ' references ' + x.from.entity.name + '\'s ' + x.from.attribute.name + ' attribute.');
+			});
 		};
 
 		/*
@@ -82,6 +127,9 @@
 		ctrl.menuOptions = [
 			['Add attribute', function () {
 				ctrl.addAttribute();
+			}],
+			['Add reference', function () {
+				ctrl.addCreateReference();
 			}],
 			null,
 			['Rename', function () {
@@ -117,6 +165,42 @@
 				}
 				ctrl.addConnectors(new Connector(ctrl.model, newAttr));
 			});
+		};
+
+		ctrl.addCreateReference = function () {
+			ctrl.onAddReference().then(function(data) {
+				var res = ctrl.model.addReference(ctrl, data);
+				if (!res) {
+					return alert('This reference already exists in this relationship');
+				}
+				// then connect entity with this relationship
+				ctrl.addRelationConnectors(data.entity);
+				ctrl.redrawRelationConnectors();
+			});
+		};
+
+		ctrl.isUniqueReference = function (reference) {
+			var res = ctrl.model.references.some(function(ref) {
+				if (ref !== reference && ref.from.entity === reference.from.entity) {
+					return true;
+				}
+			});
+			return !res;
+		};
+
+		// handler to remove reference
+		ctrl.removeReference = function (reference) {
+
+		};
+
+		// handler for remove reference when cascading
+		ctrl.onRemoveReference = function (reference) {
+			// first, if this is the only reference to that entity, we will remove the relation connector
+			// next, remove it from the relationship model
+			if (ctrl.isUniqueReference(reference)) {
+				ctrl.removeRelationConnectors(reference.from.entity);
+			}
+			ctrl.model.removeReference(reference);
 		};
 
 		/**
@@ -182,7 +266,6 @@
 
 		/**
 		 *
-		 * @param size modal size
 		 * @param attribute the Attribute model
 		 * @returns {*}
 		 */
@@ -216,7 +299,8 @@
 	angular.module('editor').component('erRelationship', {
 		bindings: {
 			model: '<',
-			onDestroy: '&'
+			onDestroy: '&',
+			onAddReference: '&'
 		},
 		templateUrl: './app/components/editor/diagram/erRelationship.html',
 		controller: RelationshipController

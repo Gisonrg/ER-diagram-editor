@@ -48,4 +48,35 @@
 		};
 	});
 
+	angular.module('editor').controller('ReferenceModalCtrl', function ($scope, $uibModalInstance, title, entities, DataType) {
+		$scope.title = title;
+		$scope.typeList = DataType;
+		$scope.entities = entities;
+
+		$scope.data = $scope.entities.length === 0 ? {} : {
+			entity: $scope.entities[0],
+			attribute: $scope.entities[0].getAttribute(0),
+			name: '',
+			type: ($scope.entities[0].getAttribute(0) && $scope.entities[0].getAttribute(0).type) || DataType[0],
+			isPrimaryKey: true
+		};
+
+		$scope.updateSelectedAttribute = function () {
+			$scope.data.attribute = $scope.data.entity.getAttribute(0);
+		};
+
+
+		$scope.ok = function () {
+			$uibModalInstance.close($scope.data);
+		};
+
+		$scope.cancel = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
+
+		$scope.validateName = function (name) {
+			return /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name);
+		}
+	});
+
 })(window.angular);

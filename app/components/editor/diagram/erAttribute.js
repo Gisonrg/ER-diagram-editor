@@ -1,7 +1,7 @@
 (function (angular) {
 	'use strict';
 
-	function AtrributeController($scope, $element, $attrs) {
+	function AttributeController($scope, $element, $attrs) {
 		var ctrl = this;
 		ctrl.$onInit = function () {
 			ctrl.attribute.dom = $element;
@@ -24,6 +24,6 @@
 			onRemove: '&' // remove this attribute
 		},
 		templateUrl: './app/components/editor/diagram/erAttribute.html',
-		controller: AtrributeController
+		controller: AttributeController
 	});
 })(window.angular);

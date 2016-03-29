@@ -72,7 +72,7 @@
 			}
 			var newScope = $scope.$new(false);
 			newScope.relationship = editorManager.createRelationship(name);
-			angular.element($compile('<er-relationship id="{{relationship.id}}" on-destroy="$ctrl.removeRelationship(relationship)" model="relationship"></er-relationship>')(newScope))
+			angular.element($compile('<er-relationship id="{{relationship.id}}" on-add-reference="$ctrl.addNewReference(relationship)" on-destroy="$ctrl.removeRelationship(relationship)" model="relationship"></er-relationship>')(newScope))
 				.css({position: 'absolute', top: offset.top, left: offset.left - containerLeftOffset})
 				.appendTo(editorContainer);
 		};
@@ -86,6 +86,24 @@
 				resolve: {
 					title: function () {
 						return 'Please enter new entity name';
+					}
+				}
+			});
+
+			return modalInstance.result; // return the promise
+		};
+
+		ctrl.addNewReference = function () {
+			var modalInstance = $uibModal.open({
+				templateUrl: 'new-reference-prompt.html',
+				controller: 'ReferenceModalCtrl',
+				size: 'lg',
+				resolve: {
+					title: function () {
+						return 'Add new reference';
+					},
+					entities: function () {
+						return editorManager.getAllEntities();
 					}
 				}
 			});
