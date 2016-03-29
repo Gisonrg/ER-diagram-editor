@@ -94,7 +94,7 @@
 		ctrl.removeRelationConnectors = function (index) {
 			var relationConnectors = ctrl.relationConnectors[index];
 			relationConnectors.destroy();
-			this.relationConnectors.splice(index, 1);
+			ctrl.relationConnectors.splice(index, 1);
 		};
 
 		ctrl.addConnectors = function (connector) {
@@ -104,7 +104,7 @@
 		ctrl.removeConnectors = function (index) {
 			var connector = ctrl.connectors[index];
 			connector.destroy();
-			this.connectors.splice(index, 1);
+			ctrl.connectors.splice(index, 1);
 		};
 
 		ctrl.showDetail = function () {
