@@ -295,8 +295,8 @@ Relationship.prototype.summarize = function () {
 		var foreignKeyMeta = {
 			attribute: reference.name,
 			reference: {
-				source: reference.from.entity.name,
-				attribute: reference.from.attribute.name
+				'source entity': reference.from.entity.name,
+				'source attribute': reference.from.attribute.name
 			}
 		};
 
