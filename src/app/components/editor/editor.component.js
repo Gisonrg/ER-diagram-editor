@@ -76,7 +76,7 @@
 			}
 			var newScope = $scope.$new(false);
 			newScope.relationship = editorManager.createRelationship(name);
-			angular.element($compile('<er-relationship id="{{relationship.id}}" on-add-reference="$ctrl.addNewReference(relationship)" on-destroy="$ctrl.removeRelationship(relationship)" model="relationship"></er-relationship>')(newScope))
+			angular.element($compile('<er-relationship id="{{relationship.id}}" on-add-reference="$ctrl.addNewReference(relationship)" on-rename="$ctrl.checkNewNameAvailability(name)" on-destroy="$ctrl.removeRelationship(relationship)" model="relationship"></er-relationship>')(newScope))
 				.css({position: 'absolute', top: offset.top, left: offset.left - containerLeftOffset})
 				.appendTo(editorContainer);
 		};

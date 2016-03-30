@@ -143,6 +143,9 @@
 
 		ctrl.renameModel = function () {
 			ctrl.askForModelName(ctrl.model.name).then(function (newName) {
+				if (!ctrl.onRename({name: newName}) && ctrl.model.name !== newName) {
+					return alert('The name already exists in the database.');
+				}
 				ctrl.model.rename(newName);
 			});
 		};
@@ -300,7 +303,8 @@
 		bindings: {
 			model: '<',
 			onDestroy: '&',
-			onAddReference: '&'
+			onAddReference: '&',
+			onRename: '&'
 		},
 		templateUrl: './app/components/editor/diagram/erRelationship.html',
 		controller: RelationshipController
