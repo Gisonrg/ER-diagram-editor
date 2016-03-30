@@ -79,4 +79,22 @@
 		}
 	});
 
+	angular.module('editor').controller('ViewDetailModalCtrl', function ($scope, $uibModalInstance, title, references, DataType) {
+		$scope.title = title;
+		$scope.typeList = DataType;
+		$scope.references = references;
+
+		$scope.editReference = function(index) {
+			console.log('edit reference of index ', index);
+		};
+
+		$scope.removeReference = function(index) {
+			console.log('remove reference of index ', index);
+		};
+
+		$scope.ok = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
+	});
+
 })(window.angular);

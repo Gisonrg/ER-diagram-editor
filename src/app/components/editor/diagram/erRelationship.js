@@ -79,7 +79,7 @@
 		 * @param {Entity} toEntity
 		 */
 		ctrl.addRelationConnectors = function (toEntity) {
-			var hasConnected = ctrl.relationConnectors.some(function(connector) {
+			var hasConnected = ctrl.relationConnectors.some(function (connector) {
 				if (connector.diagram2 === toEntity || connector.diagram1 === toEntity) {
 					return true;
 				}
@@ -113,12 +113,6 @@
 			var connector = ctrl.connectors[index];
 			connector.destroy();
 			ctrl.connectors.splice(index, 1);
-		};
-
-		ctrl.showDetail = function () {
-			ctrl.model.references.forEach(function(x) {
-				console.log(x.name + ' references ' + x.from.entity.name + '\'s ' + x.from.attribute.name + ' attribute.');
-			});
 		};
 
 		/*
@@ -158,6 +152,15 @@
 		};
 
 		/*
+		 Click title handler: show references
+		 */
+		ctrl.showDetail = function () {
+			ctrl.viewReferenceDetails(ctrl.model.references).then(function (data) {
+				console.log(data);
+			});
+		};
+
+		/*
 		 Attributes related
 		 */
 		ctrl.addAttribute = function () {
@@ -171,7 +174,7 @@
 		};
 
 		ctrl.addCreateReference = function () {
-			ctrl.onAddReference().then(function(data) {
+			ctrl.onAddReference().then(function (data) {
 				if (ctrl.model.isDuplicateReferenceName(data.name)) {
 					return alert('The reference name already exists in this relationship');
 				}
@@ -187,7 +190,7 @@
 		};
 
 		ctrl.isUniqueReference = function (reference) {
-			var res = ctrl.model.references.some(function(ref) {
+			var res = ctrl.model.references.some(function (ref) {
 				if (ref !== reference && ref.from.entity === reference.from.entity) {
 					return true;
 				}
@@ -296,6 +299,24 @@
 
 			return modalInstance.result; // return the promise
 		};
+
+		ctrl.viewReferenceDetails = function (references) {
+			var modalInstance = $uibModal.open({
+				templateUrl: 'reference-detail.html',
+				controller: 'ViewDetailModalCtrl',
+				size: 'lg',
+				resolve: {
+					title: function () {
+						return 'All References (foreign keys) in this relationship';
+					},
+					references: function () {
+						return references;
+					}
+				}
+			});
+
+			return modalInstance.result; // return the promise
+		}
 	}
 
 	angular.module('editor').component('erRelationship', {
