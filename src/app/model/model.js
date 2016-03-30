@@ -156,6 +156,12 @@ Relationship.prototype.isDuplicateAttributeName = function (name) {
 	});
 }
 
+Relationship.prototype.isDuplicateReferenceName = function (name) {
+	return this.references.some(function(ref) {
+		return ref.name.toLowerCase() === name.toLowerCase();
+	});
+}
+
 Relationship.prototype.isDuplicateReference = function (entity, attribute) {
 	return this.references.some(function(ref) {
 		return ref.from.entity === entity && ref.from.attribute === attribute;
@@ -243,8 +249,12 @@ Relationship.prototype.removeRelationConnector = function (connector) {
 Relationship.prototype.destroy = function () {
 	this.attributes.forEach(function(e) {
 		e.destroy();
-	})
+	});
+	for (var i = this.references.length - 1; i >= 0; i--) {
+		this.references[i].destroy();
+	}
 	this.attributes = [];
+	this.references = [];
 	this.dom[0].parentNode.removeChild(this.dom[0]);
 };
 
@@ -395,9 +405,8 @@ function Reference(ownerCtrl, owner, fromEntity, fromAttribute, name, type, isPr
 	this.isPrimaryKey = isPrimaryKey;
 }
 
-Reference.prototype.destory = function () {
-	this.owner.removeReference(this);
-	this.from.attribute.removeReference(this);
+Reference.prototype.destroy = function () {
+	this.ownerCtrl.onRemoveReference(this);
 };
 
 /**

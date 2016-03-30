@@ -172,6 +172,10 @@
 
 		ctrl.addCreateReference = function () {
 			ctrl.onAddReference().then(function(data) {
+				if (ctrl.model.isDuplicateReferenceName(data.name)) {
+					return alert('The reference name already exists in this relationship');
+				}
+
 				var res = ctrl.model.addReference(ctrl, data);
 				if (!res) {
 					return alert('This reference already exists in this relationship');
@@ -191,11 +195,6 @@
 			return !res;
 		};
 
-		// handler to remove reference
-		ctrl.removeReference = function (reference) {
-
-		};
-
 		// handler for remove reference when cascading
 		ctrl.onRemoveReference = function (reference) {
 			// first, if this is the only reference to that entity, we will remove the relation connector
@@ -203,7 +202,7 @@
 			if (ctrl.isUniqueReference(reference)) {
 				ctrl.removeRelationConnectors(reference.from.entity);
 			}
-			ctrl.model.removeReference(reference);
+			ctrl.model.removeReference(reference); // remove it from the array
 		};
 
 		/**
