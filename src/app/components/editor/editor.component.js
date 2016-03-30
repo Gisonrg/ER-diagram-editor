@@ -52,6 +52,10 @@
 			}
 		};
 
+		ctrl.checkNewNameAvailability = function (name) {
+			return editorManager.isNameAvailable(name);
+		};
+
 		ctrl.addNewEntity = function (offset, name) {
 			// check for the name
 			if (!editorManager.isNameAvailable(name)) {
@@ -60,7 +64,7 @@
 			}
 			var newScope = $scope.$new(false);
 			newScope.entity = editorManager.createEntity(name);
-			angular.element($compile('<er-entity id="{{entity.id}}" entity="entity" on-update="$ctrl.update()" on-destroy="$ctrl.removeEntity(entity)"></er-entity>')(newScope))
+			angular.element($compile('<er-entity id="{{entity.id}}" entity="entity" on-update="$ctrl.update()" on-rename="$ctrl.checkNewNameAvailability(name)" on-destroy="$ctrl.removeEntity(entity)"></er-entity>')(newScope))
 				.css({position: 'absolute', top: offset.top, left: offset.left - containerLeftOffset})
 				.appendTo(editorContainer);
 		};
