@@ -122,6 +122,7 @@ Entity.prototype.summarize = function () {
 	});
 
 	return {
+		type: 'entity',
 		name: this.name,
 		attributes: attributes,
 		primaryKey: primaryKeys
@@ -245,6 +246,66 @@ Relationship.prototype.destroy = function () {
 	})
 	this.attributes = [];
 	this.dom[0].parentNode.removeChild(this.dom[0]);
+};
+
+Relationship.prototype.summarize = function () {
+	var attributes = [];
+	var primaryKeys = [];
+	var foreignKeys = [];
+	var linkedEntities = [];
+	this.attributes.forEach(function (attribute) {
+		var meta = {
+			name: attribute.name,
+			type: attribute.type.name
+		};
+		if (attribute.type.hasLength) {
+			meta.length = attribute.type.length;
+		}
+		if (attribute.notNull) {
+			meta.notNull = true;
+		}
+		if (attribute.isPrimaryKey) {
+			primaryKeys.push(attribute.name);
+		}
+		attributes.push(meta);
+	});
+
+	this.references.forEach(function (reference) {
+		var meta = {
+			name: reference.name,
+			type: reference.type.name
+		};
+		if (reference.type.hasLength) {
+			meta.length = reference.type.length;
+		}
+		if (reference.isPrimaryKey) {
+			primaryKeys.push(reference.name);
+		}
+
+		var foreignKeyMeta = {
+			attribute: reference.name,
+			reference: {
+				source: reference.from.entity.name,
+				attribute: reference.from.attribute.name
+			}
+		};
+
+		if (linkedEntities.indexOf(reference.from.entity.name) === -1) {
+			linkedEntities.push(reference.from.entity.name);
+		}
+
+		foreignKeys.push(foreignKeyMeta);
+		attributes.push(meta);
+	});
+
+	return {
+		type: 'relationship',
+		name: this.name,
+		linkedEntities: linkedEntities,
+		attributes: attributes,
+		primaryKey: primaryKeys,
+		foreignKeys: foreignKeys
+	}
 };
 
 /**
