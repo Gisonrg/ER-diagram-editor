@@ -153,3 +153,13 @@ html, body {
 .primary-key {
   font-weight: bold;
 }
+
+#reference-detail-table {
+  thead > tr > th{
+    text-align: center;
+  }
+  text-align: center;
+  .reference-entity-name {
+    font-weight: bold;
+  }
+}

@@ -64,20 +64,23 @@
         <form name="referenceForm">
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Reference Entity</label>
+                    <label>Reference Entity </label>
                     <select ng-options="entity as entity.name for entity in entities"
                             ng-model="data.entity" ng-change="updateSelectedAttribute()"></select>
                 </div>
                 <div class="form-group">
-                    <label>Reference Attribute of the entity</label>
+                    <label>Reference Attribute </label>
                     <select ng-options="attr as attr.name for attr in data.entity.attributes"
                             ng-model="data.attribute"></select>
                 </div>
-                <div class="form-group" ng-if="data.attribute" ng-class="{ 'has-error' : referenceForm.name.$error.pattern || referenceForm.name.$error.required}">
+                <div class="form-group" ng-if="data.attribute"
+                     ng-class="{ 'has-error' : referenceForm.name.$error.pattern}">
                     <label for="name">Attribute name</label>
-                    <input type="text" class="form-control" name="name" id="name" ng-pattern="/^[a-zA-Z_][a-zA-Z0-9_]*$/"
+                    <input type="text" class="form-control" name="name" id="name"
+                           ng-pattern="/^[a-zA-Z_][a-zA-Z0-9_]*$/"
                            ng-model="data.name" required ng-trim="false">
-                    <span ng-show="referenceForm.name.$error.pattern || referenceForm.name.$error.required" class="help-block">Please check your name format.</span>
+                    <span ng-show="referenceForm.name.$error.pattern"
+                          class="help-block">Please check your name format.</span>
                 </div>
                 <div class="form-group" ng-if="data.attribute">
                     <label>Type</label>
@@ -96,7 +99,10 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" ng-disabled="!data.attribute || referenceForm.name.$error.pattern || !data.name || data.name.length === 0" type="submit" ng-click="ok()">OK</button>
+                <button class="btn btn-primary"
+                        ng-disabled="!data.attribute || referenceForm.name.$error.pattern || !data.name || data.name.length === 0"
+                        type="submit" ng-click="ok()">OK
+                </button>
                 <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
             </div>
         </form>
@@ -107,7 +113,30 @@
         </div>
         <form>
             <div class="modal-body">
-
+                <table class="table table-striped" id="reference-detail-table">
+                    <thead>
+                        <tr>
+                            <th>Foreign Key Name</th>
+                            <th>Reference Entity</th>
+                            <th>Reference Attribute Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="reference in references track by $index">
+                        <td class="reference-name">{{reference.name}}</td>
+                        <td class="reference-entity-name">{{ reference.from.entity.name }}</td>
+                        <td class="reference-attribute-name">{{ reference.from.attribute.name }}</td>
+                        <td>
+                            <button type="button" class="btn btn-info" ng-click="editReference($index)">Edit</button>
+                            <button type="button" ng-click="removeReference($index)" class="btn btn-danger">Remove</button>
+                        </td>
+                    </tr>
+                    <tr ng-if="references.length === 0">
+                        <td colspan="4">No foreign key is defined in this relationship yet.</tD>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" type="submit" ng-click="ok()">Done</button>

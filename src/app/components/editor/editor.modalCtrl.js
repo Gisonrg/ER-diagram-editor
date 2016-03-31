@@ -48,10 +48,11 @@
 		};
 	});
 
-	angular.module('editor').controller('ReferenceModalCtrl', function ($scope, $uibModalInstance, title, entities, DataType) {
+	angular.module('editor').controller('ReferenceModalCtrl', function ($scope, $uibModalInstance, title, entities, DataType, reference) {
 		$scope.title = title;
 		$scope.typeList = DataType;
 		$scope.entities = entities;
+		$scope.reference = reference;
 
 		$scope.data = $scope.entities.length === 0 ? {} : {
 			entity: $scope.entities[0],
@@ -61,12 +62,26 @@
 			isPrimaryKey: true
 		};
 
+		if (reference) {
+			console.log('update reference data');
+			$scope.data = {
+				entity: $scope.reference.from.entity,
+				attribute: $scope.reference.from.attribute,
+				name: $scope.reference.name,
+				type: $scope.reference.type,
+				isPrimaryKey: $scope.reference.isPrimaryKey
+			};
+		}
+
 		$scope.updateSelectedAttribute = function () {
 			$scope.data.attribute = $scope.data.entity.getAttribute(0);
 		};
 
 
 		$scope.ok = function () {
+			if (!$scope.validateName($scope.data.name)) {
+				return;
+			}
 			$uibModalInstance.close($scope.data);
 		};
 
@@ -77,6 +92,29 @@
 		$scope.validateName = function (name) {
 			return /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name);
 		}
+	});
+
+	angular.module('editor').controller('ViewDetailModalCtrl', function ($scope, $uibModalInstance, onEditReference, title, references, DataType) {
+		$scope.title = title;
+		$scope.typeList = DataType;
+		$scope.references = references;
+		$scope.onEditReference = onEditReference;
+
+		$scope.editReference = function(index) {
+			console.log('edit reference of index ', index);
+			$scope.onEditReference({ref:$scope.references[index]}).then(function(data) {
+				$scope.references[index].onUpdate(data.entity, data.attribute, data.name, data.type, data.isPrimaryKey);
+				return $uibModalInstance.close();
+			});
+		};
+
+		$scope.removeReference = function(index) {
+			$scope.references[index].onRemove();
+		};
+
+		$scope.ok = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
 	});
 
 })(window.angular);
