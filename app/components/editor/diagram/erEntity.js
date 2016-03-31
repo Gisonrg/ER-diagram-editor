@@ -118,6 +118,9 @@
 
 		ctrl.renameEntity = function () {
 			ctrl.askForEntityName(ctrl.entity.name).then(function (newName) {
+				if (!ctrl.onRename({name: newName}) && ctrl.entity.name !== newName) {
+					return alert('The name already exists in the database.');
+				}
 				ctrl.entity.rename(newName);
 			});
 		};
@@ -208,7 +211,8 @@
 		bindings: {
 			entity: '<',
 			onUpdate: '&',
-			onDestroy: '&'
+			onDestroy: '&',
+			onRename: '&'
 		},
 		templateUrl: './app/components/editor/diagram/erEntity.html',
 		controller: EntityController

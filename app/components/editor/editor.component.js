@@ -37,19 +37,21 @@
 			switch (ui.draggable[0].id) {
 				case 'entity':
 					ctrl.askForEntityName('lg').then(function (name) {
-						console.log("Adding new entity named " + name + " to the editor");
 						ctrl.addNewEntity(offset, name);
 					}, null);
 					break;
 				case 'relationship':
 					ctrl.askForEntityName('lg').then(function (name) {
-						console.log("Adding new relationship named " + name + " to the editor");
 						ctrl.addNewRelationship(offset, name);
 					}, null);
 					break;
 				default:
 					console.log("No handler for this dropped object.");
 			}
+		};
+
+		ctrl.checkNewNameAvailability = function (name) {
+			return editorManager.isNameAvailable(name);
 		};
 
 		ctrl.addNewEntity = function (offset, name) {
@@ -60,7 +62,7 @@
 			}
 			var newScope = $scope.$new(false);
 			newScope.entity = editorManager.createEntity(name);
-			angular.element($compile('<er-entity id="{{entity.id}}" entity="entity" on-update="$ctrl.update()" on-destroy="$ctrl.removeEntity(entity)"></er-entity>')(newScope))
+			angular.element($compile('<er-entity id="{{entity.id}}" entity="entity" on-update="$ctrl.update()" on-rename="$ctrl.checkNewNameAvailability(name)" on-destroy="$ctrl.removeEntity(entity)"></er-entity>')(newScope))
 				.css({position: 'absolute', top: offset.top, left: offset.left - containerLeftOffset})
 				.appendTo(editorContainer);
 		};
@@ -72,7 +74,7 @@
 			}
 			var newScope = $scope.$new(false);
 			newScope.relationship = editorManager.createRelationship(name);
-			angular.element($compile('<er-relationship id="{{relationship.id}}" on-add-reference="$ctrl.addNewReference(relationship)" on-destroy="$ctrl.removeRelationship(relationship)" model="relationship"></er-relationship>')(newScope))
+			angular.element($compile('<er-relationship id="{{relationship.id}}" on-add-reference="$ctrl.addNewReference(relationship)" on-edit-reference="$ctrl.editReference(ref)" on-rename="$ctrl.checkNewNameAvailability(name)" on-destroy="$ctrl.removeRelationship(relationship)" model="relationship"></er-relationship>')(newScope))
 				.css({position: 'absolute', top: offset.top, left: offset.left - containerLeftOffset})
 				.appendTo(editorContainer);
 		};
@@ -101,6 +103,30 @@
 				resolve: {
 					title: function () {
 						return 'Add new reference';
+					},
+					reference: function () {
+						return null;
+					},
+					entities: function () {
+						return editorManager.getAllEntities();
+					}
+				}
+			});
+
+			return modalInstance.result; // return the promise
+		};
+
+		ctrl.editReference = function (reference) {
+			var modalInstance = $uibModal.open({
+				templateUrl: 'new-reference-prompt.html',
+				controller: 'ReferenceModalCtrl',
+				size: 'lg',
+				resolve: {
+					title: function () {
+						return 'Edit reference';
+					},
+					reference: function () {
+						return reference;
 					},
 					entities: function () {
 						return editorManager.getAllEntities();

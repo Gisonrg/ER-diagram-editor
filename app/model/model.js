@@ -122,6 +122,7 @@ Entity.prototype.summarize = function () {
 	});
 
 	return {
+		type: 'entity',
 		name: this.name,
 		attributes: attributes,
 		primaryKey: primaryKeys
@@ -152,6 +153,12 @@ Relationship.prototype.rename = function(newName) {
 Relationship.prototype.isDuplicateAttributeName = function (name) {
 	return this.attributes.some(function(attr) {
 		return attr.name.toLowerCase() === name.toLowerCase();
+	});
+}
+
+Relationship.prototype.isDuplicateReferenceName = function (name) {
+	return this.references.some(function(ref) {
+		return ref.name.toLowerCase() === name.toLowerCase();
 	});
 }
 
@@ -242,9 +249,73 @@ Relationship.prototype.removeRelationConnector = function (connector) {
 Relationship.prototype.destroy = function () {
 	this.attributes.forEach(function(e) {
 		e.destroy();
-	})
+	});
+	for (var i = this.references.length - 1; i >= 0; i--) {
+		this.references[i].destroy();
+	}
 	this.attributes = [];
+	this.references = [];
 	this.dom[0].parentNode.removeChild(this.dom[0]);
+};
+
+Relationship.prototype.summarize = function () {
+	var attributes = [];
+	var primaryKeys = [];
+	var foreignKeys = [];
+	var linkedEntities = [];
+	this.attributes.forEach(function (attribute) {
+		var meta = {
+			name: attribute.name,
+			type: attribute.type.name
+		};
+		if (attribute.type.hasLength) {
+			meta.length = attribute.type.length;
+		}
+		if (attribute.notNull) {
+			meta.notNull = true;
+		}
+		if (attribute.isPrimaryKey) {
+			primaryKeys.push(attribute.name);
+		}
+		attributes.push(meta);
+	});
+
+	this.references.forEach(function (reference) {
+		var meta = {
+			name: reference.name,
+			type: reference.type.name
+		};
+		if (reference.type.hasLength) {
+			meta.length = reference.type.length;
+		}
+		if (reference.isPrimaryKey) {
+			primaryKeys.push(reference.name);
+		}
+
+		var foreignKeyMeta = {
+			attribute: reference.name,
+			reference: {
+				'source entity': reference.from.entity.name,
+				'source attribute': reference.from.attribute.name
+			}
+		};
+
+		if (linkedEntities.indexOf(reference.from.entity.name) === -1) {
+			linkedEntities.push(reference.from.entity.name);
+		}
+
+		foreignKeys.push(foreignKeyMeta);
+		attributes.push(meta);
+	});
+
+	return {
+		type: 'relationship',
+		name: this.name,
+		linkedEntities: linkedEntities,
+		attributes: attributes,
+		primaryKey: primaryKeys,
+		foreignKeys: foreignKeys
+	}
 };
 
 /**
@@ -320,6 +391,7 @@ Attribute.prototype.destroy = function () {
  * @param {Entity} fromEntity
  * @param {Attribute} fromAttribute
  * @param {string} name
+ * @param {DataType} type
  * @param {boolean} isPrimaryKey
  * @constructor
  */
@@ -334,9 +406,52 @@ function Reference(ownerCtrl, owner, fromEntity, fromAttribute, name, type, isPr
 	this.isPrimaryKey = isPrimaryKey;
 }
 
-Reference.prototype.destory = function () {
-	this.owner.removeReference(this);
-	this.from.attribute.removeReference(this);
+/**
+ *
+ * @param {Entity} fromEntity
+ * @param {Attribute} fromAttribute
+ * @param {string} name
+ * @param {DataType} type
+ * @param {boolean} isPrimaryKey
+ */
+Reference.prototype.onUpdate = function (fromEntity, fromAttribute, name, type, isPrimaryKey) {
+	// check the same name first
+	if (this.owner.isDuplicateReferenceName(name) && this.name.toLowerCase() !== name.toLowerCase()) {
+		return alert('The reference name already exists in this relationship');
+	}
+
+	// check if this gonna be a duplicate reference
+	if (this.owner.isDuplicateReference(fromEntity, fromAttribute) && (this.from.entity !== fromEntity || this.from.attribute !== fromAttribute)) {
+		return alert('This reference already exists in this relationship');
+	}
+
+	// if it's not the same from entity, need to remove it and redraw
+	// otherwise just change the diagram
+	if (fromEntity !== this.from.entity) {
+		// update the link
+		this.ownerCtrl.checkAndRemoveConnector(this);
+		this.ownerCtrl.addRelationConnectors(fromEntity);
+		this.from.entity = fromEntity;
+	}
+
+	if (fromAttribute !== this.from.attribute) {
+		this.from.attribute.removeReference(this);
+		fromAttribute.addReference(this);
+		this.from.attribute = fromAttribute;
+	}
+
+	// update meta infos
+	this.name = name;
+	this.type = type;
+	this.isPrimaryKey = isPrimaryKey;
+};
+
+Reference.prototype.onRemove = function () {
+	this.ownerCtrl.removeReference(this);
+};
+
+Reference.prototype.destroy = function () {
+	this.ownerCtrl.onRemoveReference(this);
 };
 
 /**

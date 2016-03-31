@@ -57,15 +57,19 @@
 				}
 			});
 
-			return hasDuplicate ? false : true;
+			return !hasDuplicate;
 		};
 
 		manager.generateSchemaData = function () {
 			var data = {
-				entities: []
+				entities: [],
+				relationships: []
 			};
 			entities.forEach(function (entity) {
 				data.entities.push(entity.summarize());
+			});
+			relationships.forEach(function (relationship) {
+				data.relationships.push(relationship.summarize());
 			});
 
 			return data;

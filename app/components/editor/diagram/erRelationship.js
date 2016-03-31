@@ -79,7 +79,7 @@
 		 * @param {Entity} toEntity
 		 */
 		ctrl.addRelationConnectors = function (toEntity) {
-			var hasConnected = ctrl.relationConnectors.some(function(connector) {
+			var hasConnected = ctrl.relationConnectors.some(function (connector) {
 				if (connector.diagram2 === toEntity || connector.diagram1 === toEntity) {
 					return true;
 				}
@@ -88,6 +88,7 @@
 				return;
 			}
 			ctrl.relationConnectors.push(new RelationConnector(ctrl.model, toEntity));
+			ctrl.redrawRelationConnectors();
 		};
 
 		ctrl.removeRelationConnectors = function (toEntity) {
@@ -115,12 +116,6 @@
 			ctrl.connectors.splice(index, 1);
 		};
 
-		ctrl.showDetail = function () {
-			ctrl.model.references.forEach(function(x) {
-				console.log(x.name + ' references ' + x.from.entity.name + '\'s ' + x.from.attribute.name + ' attribute.');
-			});
-		};
-
 		/*
 		 Context menu
 		 */
@@ -143,6 +138,9 @@
 
 		ctrl.renameModel = function () {
 			ctrl.askForModelName(ctrl.model.name).then(function (newName) {
+				if (!ctrl.onRename({name: newName}) && ctrl.model.name !== newName) {
+					return alert('The name already exists in the database.');
+				}
 				ctrl.model.rename(newName);
 			});
 		};
@@ -152,6 +150,13 @@
 				e.destroy();
 			});
 			ctrl.onDestroy(ctrl.model);
+		};
+
+		/*
+		 Click title handler: show references
+		 */
+		ctrl.showDetail = function () {
+			ctrl.viewReferenceDetails(ctrl.model.references);
 		};
 
 		/*
@@ -168,19 +173,22 @@
 		};
 
 		ctrl.addCreateReference = function () {
-			ctrl.onAddReference().then(function(data) {
+			ctrl.onAddReference().then(function (data) {
+				if (ctrl.model.isDuplicateReferenceName(data.name)) {
+					return alert('The reference name already exists in this relationship');
+				}
+
 				var res = ctrl.model.addReference(ctrl, data);
 				if (!res) {
 					return alert('This reference already exists in this relationship');
 				}
 				// then connect entity with this relationship
 				ctrl.addRelationConnectors(data.entity);
-				ctrl.redrawRelationConnectors();
 			});
 		};
 
 		ctrl.isUniqueReference = function (reference) {
-			var res = ctrl.model.references.some(function(ref) {
+			var res = ctrl.model.references.some(function (ref) {
 				if (ref !== reference && ref.from.entity === reference.from.entity) {
 					return true;
 				}
@@ -188,19 +196,28 @@
 			return !res;
 		};
 
-		// handler to remove reference
-		ctrl.removeReference = function (reference) {
+		ctrl.checkAndRemoveConnector = function(reference) {
+			if (ctrl.isUniqueReference(reference)) {
+				ctrl.removeRelationConnectors(reference.from.entity);
+			}
+		}
 
+		// handler for remove reference when cascading
+		ctrl.removeReference = function (reference) {
+			// first, if this is the only reference to that entity, we will remove the relation connector
+			// next, remove it from the relationship model
+			ctrl.checkAndRemoveConnector(reference);
+			// remove it from both attribute and relationship
+			reference.from.attribute.removeReference(reference);
+			ctrl.model.removeReference(reference);
 		};
 
 		// handler for remove reference when cascading
 		ctrl.onRemoveReference = function (reference) {
 			// first, if this is the only reference to that entity, we will remove the relation connector
 			// next, remove it from the relationship model
-			if (ctrl.isUniqueReference(reference)) {
-				ctrl.removeRelationConnectors(reference.from.entity);
-			}
-			ctrl.model.removeReference(reference);
+			ctrl.checkAndRemoveConnector(reference);
+			ctrl.model.removeReference(reference); // remove it from the array
 		};
 
 		/**
@@ -294,13 +311,36 @@
 
 			return modalInstance.result; // return the promise
 		};
+
+		ctrl.viewReferenceDetails = function (references) {
+			var modalInstance = $uibModal.open({
+				templateUrl: 'reference-detail.html',
+				controller: 'ViewDetailModalCtrl',
+				size: 'lg',
+				resolve: {
+					title: function () {
+						return 'All References (foreign keys) in this relationship';
+					},
+					references: function () {
+						return references;
+					},
+					onEditReference: function() {
+						return ctrl.onEditReference;
+					}
+				}
+			});
+
+			return modalInstance.result; // return the promise
+		}
 	}
 
 	angular.module('editor').component('erRelationship', {
 		bindings: {
 			model: '<',
 			onDestroy: '&',
-			onAddReference: '&'
+			onAddReference: '&',
+			onRename: '&',
+			onEditReference: '&'
 		},
 		templateUrl: './app/components/editor/diagram/erRelationship.html',
 		controller: RelationshipController
