@@ -37,13 +37,11 @@
 			switch (ui.draggable[0].id) {
 				case 'entity':
 					ctrl.askForEntityName('lg').then(function (name) {
-						console.log("Adding new entity named " + name + " to the editor");
 						ctrl.addNewEntity(offset, name);
 					}, null);
 					break;
 				case 'relationship':
 					ctrl.askForEntityName('lg').then(function (name) {
-						console.log("Adding new relationship named " + name + " to the editor");
 						ctrl.addNewRelationship(offset, name);
 					}, null);
 					break;

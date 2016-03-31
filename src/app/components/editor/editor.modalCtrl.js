@@ -63,7 +63,6 @@
 		};
 
 		if (reference) {
-			console.log('update reference data');
 			$scope.data = {
 				entity: $scope.reference.from.entity,
 				attribute: $scope.reference.from.attribute,
@@ -101,7 +100,6 @@
 		$scope.onEditReference = onEditReference;
 
 		$scope.editReference = function(index) {
-			console.log('edit reference of index ', index);
 			$scope.onEditReference({ref:$scope.references[index]}).then(function(data) {
 				$scope.references[index].onUpdate(data.entity, data.attribute, data.name, data.type, data.isPrimaryKey);
 				return $uibModalInstance.close();
