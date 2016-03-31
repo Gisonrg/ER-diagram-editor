@@ -391,6 +391,7 @@ Attribute.prototype.destroy = function () {
  * @param {Entity} fromEntity
  * @param {Attribute} fromAttribute
  * @param {string} name
+ * @param {DataType} type
  * @param {boolean} isPrimaryKey
  * @constructor
  */
@@ -404,6 +405,50 @@ function Reference(ownerCtrl, owner, fromEntity, fromAttribute, name, type, isPr
 	this.from.attribute = fromAttribute;
 	this.isPrimaryKey = isPrimaryKey;
 }
+
+/**
+ *
+ * @param {Entity} fromEntity
+ * @param {Attribute} fromAttribute
+ * @param {string} name
+ * @param {DataType} type
+ * @param {boolean} isPrimaryKey
+ */
+Reference.prototype.onUpdate = function (fromEntity, fromAttribute, name, type, isPrimaryKey) {
+	// check the same name first
+	if (this.owner.isDuplicateReferenceName(name) && this.name.toLowerCase() !== name.toLowerCase()) {
+		return alert('The reference name already exists in this relationship');
+	}
+
+	// check if this gonna be a duplicate reference
+	if (this.owner.isDuplicateReference(fromEntity, fromAttribute) && (this.from.entity !== fromEntity || this.from.attribute !== fromAttribute)) {
+		return alert('This reference already exists in this relationship');
+	}
+
+	// if it's not the same from entity, need to remove it and redraw
+	// otherwise just change the diagram
+	if (fromEntity !== this.from.entity) {
+		// update the link
+		this.ownerCtrl.checkAndRemoveConnector(this);
+		this.ownerCtrl.addRelationConnectors(fromEntity);
+		this.from.entity = fromEntity;
+	}
+
+	if (fromAttribute !== this.from.attribute) {
+		this.from.attribute.removeReference(this);
+		fromAttribute.addReference(this);
+		this.from.attribute = fromAttribute;
+	}
+
+	// update meta infos
+	this.name = name;
+	this.type = type;
+	this.isPrimaryKey = isPrimaryKey;
+};
+
+Reference.prototype.onRemove = function () {
+	this.ownerCtrl.removeReference(this);
+};
 
 Reference.prototype.destroy = function () {
 	this.ownerCtrl.onRemoveReference(this);

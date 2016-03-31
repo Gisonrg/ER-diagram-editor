@@ -76,7 +76,7 @@
 			}
 			var newScope = $scope.$new(false);
 			newScope.relationship = editorManager.createRelationship(name);
-			angular.element($compile('<er-relationship id="{{relationship.id}}" on-add-reference="$ctrl.addNewReference(relationship)" on-rename="$ctrl.checkNewNameAvailability(name)" on-destroy="$ctrl.removeRelationship(relationship)" model="relationship"></er-relationship>')(newScope))
+			angular.element($compile('<er-relationship id="{{relationship.id}}" on-add-reference="$ctrl.addNewReference(relationship)" on-edit-reference="$ctrl.editReference(ref)" on-rename="$ctrl.checkNewNameAvailability(name)" on-destroy="$ctrl.removeRelationship(relationship)" model="relationship"></er-relationship>')(newScope))
 				.css({position: 'absolute', top: offset.top, left: offset.left - containerLeftOffset})
 				.appendTo(editorContainer);
 		};
@@ -105,6 +105,30 @@
 				resolve: {
 					title: function () {
 						return 'Add new reference';
+					},
+					reference: function () {
+						return null;
+					},
+					entities: function () {
+						return editorManager.getAllEntities();
+					}
+				}
+			});
+
+			return modalInstance.result; // return the promise
+		};
+
+		ctrl.editReference = function (reference) {
+			var modalInstance = $uibModal.open({
+				templateUrl: 'new-reference-prompt.html',
+				controller: 'ReferenceModalCtrl',
+				size: 'lg',
+				resolve: {
+					title: function () {
+						return 'Edit reference';
+					},
+					reference: function () {
+						return reference;
 					},
 					entities: function () {
 						return editorManager.getAllEntities();

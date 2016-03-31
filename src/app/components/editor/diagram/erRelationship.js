@@ -88,6 +88,7 @@
 				return;
 			}
 			ctrl.relationConnectors.push(new RelationConnector(ctrl.model, toEntity));
+			ctrl.redrawRelationConnectors();
 		};
 
 		ctrl.removeRelationConnectors = function (toEntity) {
@@ -155,9 +156,7 @@
 		 Click title handler: show references
 		 */
 		ctrl.showDetail = function () {
-			ctrl.viewReferenceDetails(ctrl.model.references).then(function (data) {
-				console.log(data);
-			});
+			ctrl.viewReferenceDetails(ctrl.model.references);
 		};
 
 		/*
@@ -185,7 +184,6 @@
 				}
 				// then connect entity with this relationship
 				ctrl.addRelationConnectors(data.entity);
-				ctrl.redrawRelationConnectors();
 			});
 		};
 
@@ -198,13 +196,27 @@
 			return !res;
 		};
 
+		ctrl.checkAndRemoveConnector = function(reference) {
+			if (ctrl.isUniqueReference(reference)) {
+				ctrl.removeRelationConnectors(reference.from.entity);
+			}
+		}
+
+		// handler for remove reference when cascading
+		ctrl.removeReference = function (reference) {
+			// first, if this is the only reference to that entity, we will remove the relation connector
+			// next, remove it from the relationship model
+			ctrl.checkAndRemoveConnector(reference);
+			// remove it from both attribute and relationship
+			reference.from.attribute.removeReference(reference);
+			ctrl.model.removeReference(reference);
+		};
+
 		// handler for remove reference when cascading
 		ctrl.onRemoveReference = function (reference) {
 			// first, if this is the only reference to that entity, we will remove the relation connector
 			// next, remove it from the relationship model
-			if (ctrl.isUniqueReference(reference)) {
-				ctrl.removeRelationConnectors(reference.from.entity);
-			}
+			ctrl.checkAndRemoveConnector(reference);
 			ctrl.model.removeReference(reference); // remove it from the array
 		};
 
@@ -311,6 +323,9 @@
 					},
 					references: function () {
 						return references;
+					},
+					onEditReference: function() {
+						return ctrl.onEditReference;
 					}
 				}
 			});
@@ -324,7 +339,8 @@
 			model: '<',
 			onDestroy: '&',
 			onAddReference: '&',
-			onRename: '&'
+			onRename: '&',
+			onEditReference: '&'
 		},
 		templateUrl: './app/components/editor/diagram/erRelationship.html',
 		controller: RelationshipController
