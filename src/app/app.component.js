@@ -1,8 +1,12 @@
 (function (angular) {
 	'use strict';
-	MainController.$inject = ['$scope', '$element', '$attrs', 'editorManager', '$uibModal', '$sessionStorage', '$alert'];
+	MainController.$inject = [
+		'$scope', '$element', '$attrs', 'editorManager',
+		'$uibModal', '$sessionStorage', '$alert',
+		'UserService', 'SchemaService'
+	];
 	// The main component for the application
-	function MainController($scope, $element, $attrs, editorManager, $uibModal, $sessionStorage, $alert) {
+	function MainController($scope, $element, $attrs, editorManager, $uibModal, $sessionStorage, $alert, UserService, SchemaService) {
 		var ctrl = this;
 		var successAlert = $alert({
 			title: 'Success',
@@ -13,12 +17,30 @@
 			duration: 1,
 			show: false
 		});
-		var deleteAlert = $alert({
+		var loginErrorAlert = $alert({
+			title: 'Oops, please check your user details',
+			templateUrl: 'app-alert.html',
+			container: 'body',
+			placement: 'top-right',
+			type: 'danger',
+			duration: 2,
+			show: false
+		});
+		var doneAlert = $alert({
 			title: 'Done',
 			templateUrl: 'app-alert.html',
 			container: 'body',
 			placement: 'top-right',
 			type: 'info',
+			duration: 2,
+			show: false
+		});
+		var errorAlert = $alert({
+			title: 'Oops, something goes wrong',
+			templateUrl: 'app-alert.html',
+			container: 'body',
+			placement: 'top-right',
+			type: 'danger',
 			duration: 2,
 			show: false
 		});
@@ -38,23 +60,78 @@
 				return e.archive();
 			});
 
-			$sessionStorage.setObject('data', {
+			var savedData = {
 				entities: archivedEntities,
 				relationships: archivedRelationships
+			};
+
+			ctrl.askForName($sessionStorage.get('schemaName')).then(function (name) {
+				SchemaService.saveSchema(name, JSON.stringify(savedData))
+					.success(function() {
+						successAlert.show();
+					})
+					.error(function(error) {
+						errorAlert.show();
+					});
 			});
-			successAlert.show();
 		};
 
 		ctrl.loadSchemaData = function () {
-			successAlert.show();
-			var data = $sessionStorage.getObject('data');
-			$scope.$broadcast('clearAllData');
-			$scope.$broadcast('loadSchemaData', data);
+			SchemaService.getSchemas()
+				.success(function(data) {
+					ctrl.showSavedSchemas(data).then(function(id) {
+						SchemaService.getSchema(id)
+							.success(function(data) {
+								$scope.$broadcast('clearAllData');
+								$scope.$broadcast('loadSchemaData', JSON.parse(data.diagram.data));
+								successAlert.show();
+							})
+							.error(function(error) {
+								errorAlert.show();
+							})
+					});
+				})
+				.error(function(error) {
+					errorAlert.show();
+				});
 		};
 
 		ctrl.clearSchemaData = function () {
-			deleteAlert.show();
 			$scope.$broadcast('clearAllData');
+			doneAlert.show();
+		};
+
+		/*
+		User related
+		 */
+		ctrl.login = function(email, password) {
+			UserService.login(email, password)
+				.success(function(response) {
+					$sessionStorage.set('token', response.token);
+					successAlert.show();
+					$scope.$broadcast('user:login');
+				})
+				.error(function() {
+					loginErrorAlert.show();
+				});
+		};
+
+		ctrl.signup = function(email, password) {
+			UserService.signUp(email, password)
+				.success(function(response) {
+					$sessionStorage.set('token', response.token);
+					$scope.$broadcast('user:login');
+					successAlert.show();
+				})
+				.error(function() {
+					loginErrorAlert.show();
+				});
+		};
+
+		ctrl.logout = function() {
+			$sessionStorage.remove('token');
+			$scope.$broadcast('clearAllData');
+			doneAlert.show();
 		};
 
 		ctrl.showJsonModal = function (data) {
@@ -68,6 +145,34 @@
 					}
 				}
 			});
+		};
+
+		ctrl.askForName = function (name) {
+			var modalInstance = $uibModal.open({
+				templateUrl: 'save-schema-modal.html',
+				controller: 'SaveSchemaModalCtrl',
+				size: 'lg',
+				resolve: {
+					name: function () {
+						return name;
+					}
+				}
+			});
+			return modalInstance.result;
+		};
+
+		ctrl.showSavedSchemas = function (data) {
+			var modalInstance = $uibModal.open({
+				templateUrl: 'view-all-schemas.html',
+				controller: 'ViewSchemasModalCtrl',
+				size: 'lg',
+				resolve: {
+					data: function () {
+						return data;
+					}
+				}
+			});
+			return modalInstance.result;
 		};
 	}
 

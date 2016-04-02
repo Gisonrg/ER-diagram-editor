@@ -14,6 +14,9 @@
 			},
 			getObject: function(key) {
 				return JSON.parse($window.sessionStorage[key] || '{}');
+			},
+			remove: function(key) {
+				$window.sessionStorage.removeItem(key);
 			}
 		};
 	});
