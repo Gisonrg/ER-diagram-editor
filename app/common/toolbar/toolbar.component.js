@@ -8,7 +8,10 @@
 
 	angular.module('toolbar').component('toolbar', {
 		bindings: {
-			onGenerate : '&'
+			onGenerate : '&',
+			onClearData: '&',
+			onLoadData: '&',
+			onSaveData: '&'
 		},
 		templateUrl: './app/common/toolbar/toolbar.html',
 		controller: ToolbarController

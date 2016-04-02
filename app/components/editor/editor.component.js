@@ -67,6 +67,50 @@
 				.appendTo(editorContainer);
 		};
 
+		$scope.$on('loadSchemaData', function(event, data) {
+			data.entities.forEach(function(e) {
+				ctrl.onLoadEntity(e);
+			});
+
+			data.relationships.forEach(function(e) {
+				e.references.forEach(function(ref) {
+					ref.from.entity = editorManager.getEntityByName(ref.from.entity);
+					ref.from.attribute = ref.from.entity.getAttributeByName(ref.from.attribute);
+				});
+				ctrl.onLoadRelationship(e);
+			});
+		});
+
+		ctrl.onLoadEntity = function (archivedData) {
+			var newScope = $scope.$new(false);
+			newScope.entity = editorManager.createEntity(archivedData.name);
+			// add attributes
+			archivedData.attributes.forEach(function(newAttr) {
+				newAttr.type = new DataType(newAttr.type.name, newAttr.type.length);
+				newScope.entity.addAttribute(newAttr);
+			});
+
+			// newScope.toAddAttributes = archivedData.attributes;
+			angular.element($compile('<er-entity id="{{entity.id}}" entity="entity" needs-load-attribute="true" on-update="$ctrl.update()" on-rename="$ctrl.checkNewNameAvailability(name)" on-destroy="$ctrl.removeEntity(entity)"></er-entity>')(newScope))
+				.css({position: 'absolute', top: archivedData.position.top, left: archivedData.position.left})
+				.appendTo(editorContainer);
+		};
+
+		ctrl.onLoadRelationship = function (archivedData) {
+			var newScope = $scope.$new(false);
+			newScope.relationship = editorManager.createRelationship(archivedData.name);
+			// add attributes
+			archivedData.attributes.forEach(function(newAttr) {
+				newAttr.type = new DataType(newAttr.type.name, newAttr.type.length);
+				newScope.relationship.addAttribute(newAttr);
+			});
+
+			newScope.toAddReferences = archivedData.references;
+			angular.element($compile('<er-relationship id="{{relationship.id}}" to-add-references="toAddReferences" needs-load-attribute="true" on-add-reference="$ctrl.addNewReference(relationship)" on-edit-reference="$ctrl.editReference(ref)" on-rename="$ctrl.checkNewNameAvailability(name)" on-destroy="$ctrl.removeRelationship(relationship)" model="relationship"></er-relationship>')(newScope))
+				.css({position: 'absolute', top: archivedData.position.top, left: archivedData.position.left})
+				.appendTo(editorContainer);
+		};
+
 		ctrl.addNewRelationship = function (offset, name) {
 			if (!editorManager.isNameAvailable(name)) {
 				alert('The name already exists in the database.');

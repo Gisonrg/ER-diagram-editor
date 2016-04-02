@@ -22,7 +22,19 @@
 					ctrl.redrawRelationConnectors();
 				}
 			});
+
+			// check if need to load attributes
+			if (ctrl.needsLoadAttribute) {
+				ctrl.entity.attributes.forEach(function(newAttr) {
+					ctrl.addConnectors(new Connector(ctrl.entity, newAttr));
+				});
+			}
 		};
+
+		// Event Handler
+		$scope.$on('clearAllData', function() {
+			ctrl.removeEntity();
+		});
 
 		/*
 		 Rendering related
@@ -84,6 +96,10 @@
 			this.connectors.splice(index, 1);
 		};
 
+		ctrl.onLoadAttributes = function (data) {
+			console.log(data);
+		};
+
 		/*
 		 Attribute realted
 		 */
@@ -118,7 +134,7 @@
 
 		ctrl.renameEntity = function () {
 			ctrl.askForEntityName(ctrl.entity.name).then(function (newName) {
-				if (!ctrl.onRename({name: newName}) && ctrl.entity.name !== newName) {
+				if (!ctrl.onRename({name: newName}) && ctrl.entity.name.toLowerCase() !== newName.toLowerCase()) {
 					return alert('The name already exists in the database.');
 				}
 				ctrl.entity.rename(newName);
@@ -210,6 +226,7 @@
 	angular.module('editor').component('erEntity', {
 		bindings: {
 			entity: '<',
+			needsLoadAttribute: '<', // indicate if we should load attribtues
 			onUpdate: '&',
 			onDestroy: '&',
 			onRename: '&'

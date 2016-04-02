@@ -40,6 +40,21 @@
 		}
 
 		/**
+		 * Get an entity by its name
+		 * @param name
+		 * @returns {string|undefined}
+		 */
+		manager.getEntityByName = function (name) {
+			return entities.find(function(entity) {
+				return entity.name === name;
+			});
+		}
+
+		manager.getAllRelationships = function () {
+			return relationships;
+		}
+
+		/**
 		 *
 		 * @param name String the name of entity/relationship
 		 * @return boolean if the name is available
@@ -73,6 +88,11 @@
 			});
 
 			return data;
+		};
+
+		manager.clearAll = function () {
+			entities = [];
+			relationships = [];
 		};
 
 		return manager;

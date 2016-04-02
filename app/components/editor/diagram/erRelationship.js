@@ -22,7 +22,33 @@
 					ctrl.redrawRelationConnectors();
 				}
 			});
+
+			// check if need to load attributes
+			if (ctrl.needsLoadAttribute) {
+				ctrl.model.attributes.forEach(function(newAttr) {
+					ctrl.addConnectors(new Connector(ctrl.model, newAttr));
+				});
+			}
+
+			if (ctrl.toAddReferences) {
+				ctrl.toAddReferences.forEach(function(ref) {
+					var data = {
+						entity: ref.from.entity,
+						attribute: ref.from.attribute,
+						name: ref.name,
+						type: new DataType(ref.type.name, ref.type.length),
+						isPrimaryKey: ref.isPrimaryKey
+					};
+					ctrl.model.addReference(ctrl, data);
+					ctrl.addRelationConnectors(data.entity);
+				});
+			}
 		};
+
+		// Event handler
+		$scope.$on('clearAllData', function() {
+			ctrl.removeModel();
+		});
 
 		/*
 		 Rendering related
@@ -36,14 +62,14 @@
 		});
 
 		ctrl.alignAttributes = function () {
-			var radius = 200, // radius of the circle
+			var radius = 150, // radius of the circle
 				elementWidth = 100 / 2,
 				elementHeight = 28 / 2;
 
 			var fields = angular.element('#relationship-' + ctrl.model.name + ' er-attribute'),
 				width = 200,
 				height = 120,
-				angle = 0,
+				angle = Math.PI / 2,
 				step = (2 * Math.PI) / fields.length;
 
 			// for drawing
@@ -124,7 +150,7 @@
 				ctrl.addAttribute();
 			}],
 			['Add reference', function () {
-				ctrl.addCreateReference();
+				ctrl.addReference();
 			}],
 			null,
 			['Rename', function () {
@@ -138,7 +164,7 @@
 
 		ctrl.renameModel = function () {
 			ctrl.askForModelName(ctrl.model.name).then(function (newName) {
-				if (!ctrl.onRename({name: newName}) && ctrl.model.name !== newName) {
+				if (!ctrl.onRename({name: newName}) && ctrl.model.name.toLowerCase() !== newName.toLowerCase()) {
 					return alert('The name already exists in the database.');
 				}
 				ctrl.model.rename(newName);
@@ -172,7 +198,7 @@
 			});
 		};
 
-		ctrl.addCreateReference = function () {
+		ctrl.addReference = function () {
 			ctrl.onAddReference().then(function (data) {
 				if (ctrl.model.isDuplicateReferenceName(data.name)) {
 					return alert('The reference name already exists in this relationship');
@@ -337,6 +363,8 @@
 	angular.module('editor').component('erRelationship', {
 		bindings: {
 			model: '<',
+			needsLoadAttribute: '<',
+			toAddReferences: '<',
 			onDestroy: '&',
 			onAddReference: '&',
 			onRename: '&',

@@ -21,6 +21,7 @@ function Connector(entity, attribute) {
 	path.style.strokeWidth = '1px'; //Set stroke width
 	svg.appendChild(path);
 	this.dom = path;
+	this.dom.setAttribute('name', 'attr connector from ' + this.fromModel.name + ' to ' + this.attributeModel.name);
 }
 
 Connector.prototype.redraw = function () {
@@ -42,7 +43,9 @@ Connector.prototype.redraw = function () {
 Connector.prototype.destroy = function () {
 	this.fromModel.removeConnectors(this);
 	this.attributeModel.removeConnectors(this);
-	this.dom.parentNode.removeChild(this.dom);
+	if (this.dom.parentNode) {
+		this.dom.parentNode.removeChild(this.dom);
+	}
 }
 
 /**
@@ -64,6 +67,7 @@ function RelationConnector(diagram1, diagram2) {
 	path.style.strokeWidth = '1px'; //Set stroke width
 	svg.appendChild(path);
 	this.dom = path;
+	this.dom.setAttribute('name', 'relation connector from ' + this.diagram1.name + ' to ' + this.diagram2.name);
 }
 
 RelationConnector.prototype.redraw = function () {
@@ -84,5 +88,7 @@ RelationConnector.prototype.redraw = function () {
 RelationConnector.prototype.destroy = function () {
 	this.diagram1.removeRelationConnector(this);
 	this.diagram2.removeRelationConnector(this);
-	this.dom.parentNode.removeChild(this.dom);
+	if (this.dom.parentNode) {
+		this.dom.parentNode.removeChild(this.dom);
+	}
 }

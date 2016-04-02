@@ -1,5 +1,5 @@
 <div class="main-container">
-    <toolbar on-generate="$ctrl.generateSchemaData()"></toolbar>
+    <toolbar on-generate="$ctrl.generateSchemaData()" on-save-data="$ctrl.saveSchemaData()" on-load-data="$ctrl.loadSchemaData()" on-clear-data="$ctrl.clearSchemaData()"></toolbar>
     <editor></editor>
 </div>
 <script type="text/ng-template" id="json-data-viewer.html">
@@ -12,5 +12,11 @@
     <div class="modal-footer">
         <button class="btn btn-info" type="button" ng-click="export()">Export</button>
         <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+    </div>
+</script>
+<script type="text/ng-template" id="app-alert.html">
+    <div class="alert-box alert" ng-class="[type ? 'alert-' + type : null]">
+        <button type="button" class="close" ng-if="dismissable" ng-click="$hide()">&times;</button>
+        <strong ng-bind="title"></strong>&nbsp;<span ng-bind-html="content"></span>
     </div>
 </script>
