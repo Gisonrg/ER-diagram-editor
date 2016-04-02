@@ -7,6 +7,7 @@
     "bootstrap": "^3.3.6",
     "angular-bootstrap-contextmenu": "^0.9.6",
     "angular-bootstrap": "^1.2.1",
-    "json-formatter": "^0.5.0"
+    "json-formatter": "^0.5.0",
+    "angular-strap": "^2.3.8"
   }
 }

@@ -16,6 +16,20 @@ function Entity(name) {
 	this.relationConnectors = [];
 }
 
+Entity.prototype.archive = function() {
+	var position = angular.element(this.dom).position();
+	var attributesData = this.attributes.map(function(attr) {
+		return attr.archive();
+	});
+
+	return {
+		name: this.name,
+		id: this.id,
+		attributes: attributesData,
+		position: position
+	};
+};
+
 Entity.prototype.rename = function(newName) {
 	this.name = newName;
 	this.id = 'entity-' + this.name;
@@ -41,6 +55,12 @@ Entity.prototype.addAttribute = function (attributeData) {
 
 Entity.prototype.getAttribute = function (index) {
 	return this.attributes[index];
+};
+
+Entity.prototype.getAttributeByName = function (name) {
+	return this.attributes.find(function(attr) {
+		return attr.name === name;
+	});
 };
 
 /**
@@ -98,7 +118,9 @@ Entity.prototype.destroy = function () {
 		e.destroy();
 	})
 	this.attributes = [];
-	this.dom[0].parentNode.removeChild(this.dom[0]);
+	if (this.dom[0] && this.dom[0].parentNode) {
+		this.dom[0].parentNode.removeChild(this.dom[0]);
+	}
 };
 
 Entity.prototype.summarize = function () {
@@ -144,6 +166,24 @@ function Relationship(name) {
 	this.relationConnectors = [];
 }
 
+Relationship.prototype.archive = function() {
+	var position = angular.element(this.dom).position();
+	var attributesData = this.attributes.map(function(attr) {
+		return attr.archive();
+	});
+	var referencesData = this.references.map(function(ref) {
+		return ref.archive();
+	});
+
+	return {
+		name: this.name,
+		id: this.id,
+		attributes: attributesData,
+		references: referencesData,
+		position: position
+	};
+};
+
 Relationship.prototype.rename = function(newName) {
 	this.name = newName;
 	this.id = 'relationship-' + this.name;
@@ -171,6 +211,10 @@ Relationship.prototype.isDuplicateReference = function (entity, attribute) {
 Relationship.prototype.addAttribute = function (attributeData) {
 	// check for duplicate name first
 	if (this.isDuplicateAttributeName(attributeData.name)) {
+		return false;
+	}
+
+	if (this.isDuplicateReferenceName(attributeData.name)) {
 		return false;
 	}
 
@@ -255,7 +299,9 @@ Relationship.prototype.destroy = function () {
 	}
 	this.attributes = [];
 	this.references = [];
-	this.dom[0].parentNode.removeChild(this.dom[0]);
+	if (this.dom[0] && this.dom[0].parentNode) {
+		this.dom[0].parentNode.removeChild(this.dom[0]);
+	}
 };
 
 Relationship.prototype.summarize = function () {
@@ -330,7 +376,7 @@ function Attribute(attributeData) {
 	this.isPrimaryKey = attributeData.isPrimaryKey || false;
 	this.isForeignKey = attributeData.isForeignKey || false;
 	this.isKey = this.isPrimaryKey || this.isForeignKey;
-
+	
 	this.dom = null;
 	this.connectors = [];
 	this.references = []; // keep the references
@@ -342,6 +388,16 @@ Attribute.prototype.updateData = function (attributeData) {
 	this.notNull = attributeData.notNull;
 	this.isPrimaryKey = attributeData.isPrimaryKey || false;
 	this.isForeignKey = attributeData.isForeignKey || false;
+};
+
+Attribute.prototype.archive = function() {
+	return {
+		name: this.name,
+		type: this.type,
+		notNull: this.notNull,
+		isPrimaryKey: this.isPrimaryKey,
+		isForeignKey: this.isForeignKey
+	};
 };
 
 Attribute.prototype.addConnectors = function (connectors) {
@@ -380,7 +436,9 @@ Attribute.prototype.destroy = function () {
 		ref.ownerCtrl.onRemoveReference(ref);
 	});
 	this.references = [];
-	this.dom[0].parentNode.removeChild(this.dom[0]);
+	if (this.dom[0] && this.dom[0].parentNode) {
+		this.dom[0].parentNode.removeChild(this.dom[0]);
+	}
 };
 
 /**
@@ -405,6 +463,19 @@ function Reference(ownerCtrl, owner, fromEntity, fromAttribute, name, type, isPr
 	this.from.attribute = fromAttribute;
 	this.isPrimaryKey = isPrimaryKey;
 }
+
+Reference.prototype.archive = function() {
+	return {
+		name: this.name,
+		type: this.type,
+		owner: this.owner.name,
+		from: {
+			entity: this.from.entity.name,
+			attribute: this.from.attribute.name
+		},
+		isPrimaryKey: this.isPrimaryKey
+	};
+};
 
 /**
  *

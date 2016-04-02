@@ -26,13 +26,19 @@ html, body {
   background: transparent url('../img/background.png');
 }
 
+.alert-box {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
 .toolbar-banner {
   z-index: 1;
   background: white;
   position: fixed;
   top: 0;
   height: 80px;
-  width: 25%;
+  width: 320px;
   padding: 5px;
   text-align: center;
   background-color: #fff3e0;
@@ -44,7 +50,7 @@ html, body {
   top: 0;
   bottom: 0;
   left: 0;
-  width: 25%;
+  width: 320px;
   padding: 50px 15px;
   margin-top: 80px;
   text-align: center;
@@ -55,8 +61,8 @@ html, body {
 .toolbar-menu {
   position: fixed;
   bottom: 0;
-  height: 50px;
-  width: 25%;
+  height: 180px;
+  width: 320px;
   padding: 10px;
   background-color: #d0e5f5;
   text-align: center;
@@ -88,7 +94,8 @@ html, body {
   top: 0;
   bottom: 0;
   right: 0;
-  width: 75%;
+  left: 320px;
+  min-width: 1000px;
   overflow: auto;
   height: 100%;
 
@@ -148,10 +155,12 @@ html, body {
 
 .relationship-model-name {
   cursor: pointer;
+  font-weight:bold;
 }
 
 .primary-key {
   font-weight: bold;
+  text-decoration: underline;
 }
 
 #reference-detail-table {

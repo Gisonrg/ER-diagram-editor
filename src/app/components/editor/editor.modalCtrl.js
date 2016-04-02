@@ -72,10 +72,14 @@
 			};
 		}
 
-		$scope.updateSelectedAttribute = function () {
+		$scope.updateSelectedEntity = function () {
 			$scope.data.attribute = $scope.data.entity.getAttribute(0);
+			$scope.data.type = $scope.data.attribute && $scope.data.attribute.type;
 		};
 
+		$scope.updateSelectedAttribute = function() {
+			$scope.data.type = $scope.data.attribute.type;
+		}
 
 		$scope.ok = function () {
 			if (!$scope.validateName($scope.data.name)) {

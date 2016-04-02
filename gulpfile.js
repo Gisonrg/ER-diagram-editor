@@ -33,6 +33,7 @@ var paths = {
 		'src/bower_components/angular-dragdrop/src/angular-dragdrop.js',
 		'src/bower_components/bootstrap/dist/js/bootstrap.min.js',
 		'src/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
+		'src/bower_components/angular-strap/dist/angular-strap.min.js',
 		'src/bower_components/angular-bootstrap-contextmenu/contextMenu.js',
 		'src/bower_components/json-formatter/dist/json-formatter.min.js'
 	],
@@ -47,6 +48,7 @@ var paths = {
 		'dist/asset/js/angular-dragdrop.js',
 		'dist/asset/js/bootstrap.min.js',
 		'dist/asset/js/ui-bootstrap-tpls.min.js',
+		'dist/asset/js/angular-strap.min.js',
 		'dist/asset/js/contextMenu.js',
 		'dist/asset/js/json-formatter.min.js'
 	],
