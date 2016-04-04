@@ -1,5 +1,10 @@
 <div class="main-container">
-    <toolbar on-generate="$ctrl.generateSchemaData()" on-save-data="$ctrl.saveSchemaData()" on-load-data="$ctrl.loadSchemaData()" on-clear-data="$ctrl.clearSchemaData()"></toolbar>
+    <toolbar on-generate="$ctrl.generateSchemaData()" on-save-data="$ctrl.saveSchemaData()"
+             on-load-data="$ctrl.loadSchemaData()"
+             on-login="$ctrl.login(email, password)"
+             on-signup="$ctrl.signup(email, password)"
+             on-clear-data="$ctrl.clearSchemaData()"
+             on-logout="$ctrl.logout()"></toolbar>
     <editor></editor>
 </div>
 <script type="text/ng-template" id="json-data-viewer.html">
@@ -18,5 +23,55 @@
     <div class="alert-box alert" ng-class="[type ? 'alert-' + type : null]">
         <button type="button" class="close" ng-if="dismissable" ng-click="$hide()">&times;</button>
         <strong ng-bind="title"></strong>&nbsp;<span ng-bind-html="content"></span>
+    </div>
+</script>
+<script type="text/ng-template" id="view-all-schemas.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Load saved schemas</h3>
+    </div>
+    <div class="modal-body">
+        <table class="table table-striped" id="load-schema-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="schema in data track by schema.id">
+                <td class="reference-name">{{schema.name}}</td>
+                <td>
+                    <button type="button" class="btn btn-info" ng-click="select(schema.id)">Load</button>
+                </td>
+            </tr>
+            <tr ng-if="data.length === 0">
+                <td colspan="2">No data.</tD>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+</script>
+<script type="text/ng-template" id="save-schema-modal.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Save schema</h3>
+    </div>
+
+    <div class="modal-body">
+        <form name="newNameForm">
+            <div class="form-group"
+                 ng-class="{ 'has-error' : newNameForm.name.$error.required}">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" name="name" id="name"
+                       ng-model="name" required>
+                <span ng-show="newNameForm.name.$error.required" class="help-block">Please enter a name.</span>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-disabled="newNameForm.name.$error.required" ng-click="save()">Save</button>
+        <button class="btn btn-primary" type="button" ng-click="cancel()">Cancel</button>
     </div>
 </script>

@@ -61,7 +61,7 @@ html, body {
 .toolbar-menu {
   position: fixed;
   bottom: 0;
-  height: 180px;
+  height: 250px;
   width: 320px;
   padding: 10px;
   background-color: #d0e5f5;
@@ -163,6 +163,10 @@ html, body {
   text-decoration: underline;
 }
 
+.error-background {
+  background-color: #f2dede;
+}
+
 #reference-detail-table {
   thead > tr > th{
     text-align: center;
@@ -170,5 +174,12 @@ html, body {
   text-align: center;
   .reference-entity-name {
     font-weight: bold;
+  }
+}
+
+#load-schema-table {
+  text-align: center;
+  thead > tr > th{
+    text-align: center;
   }
 }

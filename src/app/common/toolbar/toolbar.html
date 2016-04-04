@@ -29,11 +29,26 @@
 </div>
 <div class="toolbar-menu">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12" ng-if="hasLogin">
             <button type="button" class="btn btn-default btn-block" ng-click="$ctrl.onSaveData()">Save</button>
             <button type="button" class="btn btn-default btn-block" ng-click="$ctrl.onLoadData()">Load</button>
             <button type="button" class="btn btn-default btn-block" ng-click="$ctrl.onClearData()">Clear</button>
             <button type="button" class="btn btn-default btn-block" ng-click="$ctrl.onGenerate()">Generate</button>
+            <button type="button" class="btn btn-default btn-block" ng-click="$ctrl.logout()">Logout</button>
+        </div>
+        <div class="col-md-12" ng-if="!hasLogin">
+            <form name="loginForm">
+                <div class="form-group" ng-class="{'has-error': loginForm.email.$touched && loginForm.email.$error.email}">
+                    <label for="email">Email address</label>
+                    <input type="email" class="form-control" ng-class="{'error-background': loginForm.email.$touched && loginForm.email.$error.email}" id="email" name="email" ng-model="userData.email" placeholder="Email" required>
+                </div>
+                <div class="form-group" ng-class="{'has-error': loginForm.password.$touched && loginForm.password.$error.required}">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" ng-class="{'error-background': loginForm.password.$touched && loginForm.password.$error.required}" id="password"  name="password" ng-model="userData.password" placeholder="Password" required>
+                </div>
+                <button type="button" class="btn btn-primary btn-block" type="submit" ng-click="$ctrl.login(loginForm.$valid)">Login</button>
+                <button type="button" class="btn btn-info btn-block" ng-click="$ctrl.signup(loginForm.$valid)">Sign Up</button>
+            </form>
         </div>
     </div>
 </div>
