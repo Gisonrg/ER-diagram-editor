@@ -1,5 +1,9 @@
 # ER-diagram-editor
-An editor to interactively draw, save and edit entity-relationship diagrams
+An editor to interactively draw, save and edit entity-relationship diagrams.    
+[Start playing it](http://gisonrg.github.io/ER-diagram-editor/)
+
+## User Guide
+[here](https://github.com/Gisonrg/ER-diagram-editor/blob/master/User%20Manual.pdf)
 
 ## Tech Stack
 * Angular.js v1.5
