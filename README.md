@@ -21,5 +21,4 @@ An editor to interactively draw, save and edit entity-relationship diagrams.
 5. `gulp` to start develop and automate all compiling/injecting process. Changes will be automatically refreshed and reflected in browser as well.
 
 ## Deployment
-1. `gulp dist`
-2. `gulp deploy`
+`gulp dist` to generate compact code for deployment. It will be in the `dist/` folder.
